@@ -1,102 +1,79 @@
 import React, { useCallback, useState, useRef } from 'react';
 import SoundDriver from './SoundDriver';
+import DragAndDrop from '../DragAndDrop/DragAndDrop';
+import FileUpload from '../FileUpload/FileUpload';
+import LoadingMessage from '../Loading/LoadingMessage';
+import PlayerControls from '../PlayerControls/PlayerControls';
+import VolumeControl from '../VolumeControl/VolumeControl';
 
 function Player() {
-  const soundController = useRef<undefined | SoundDriver>(undefined);
-  const [loading, setLoading] = useState(false);
+    const soundController = useRef<undefined | SoundDriver>(undefined);
+    const [loading, setLoading] = useState(false);
 
-  const uploadAudio = useCallback(async event => {
-    const { files } = event.target;
+    const loadAudioFile = useCallback(async (audioFile: File) => {
+        setLoading(true);
 
-    if (!files.length) {
-      return;
-    }
+        const soundInstance = new SoundDriver(audioFile);
+        try {
+            await soundInstance.init(document.getElementById('waveContainer'));
+            soundController.current = soundInstance;
+            soundInstance.drawChart();
+        } catch (err) {
+            console.error('Failed to load audio:', err);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
 
-    setLoading(true);
+    const togglePlayer = useCallback(
+        (type: string) => () => {
+            if (type === 'play') {
+                soundController.current?.play();
+            } else if (type === 'stop') {
+                soundController.current?.pause(true);
+            } else {
+                soundController.current?.pause();
+            }
+        },
+        []
+    );
 
-    const audioFile = files[0];
+    const onVolumeChange = useCallback(
+        (event: React.ChangeEvent<HTMLInputElement>) => {
+            soundController.current?.changeVolume(Number(event.target.value));
+        },
+        [soundController]
+    );
 
-    if (!audioFile || !audioFile.type.includes('audio')) {
-      throw new Error('Wrong audio file');
-    }
+    return (
+        <div style={{ width: '100%' }}>
+            {loading && <LoadingMessage />}
 
-    const soundInstance = new SoundDriver(audioFile);
-    try {
-      await soundInstance.init(document.getElementById('waveContainer'));
-      soundController.current = soundInstance;
-    } catch(err: Error) {
-      console.log(err);
-    } finally {
-      setLoading(false);
-      soundInstance.drawChart();
-    }
-  }, []);
-
-  const togglePlayer = useCallback(
-    (type: string) => () => {
-      if (type === 'play') {
-        soundController.current?.play();
-      } else if (type === 'stop') {
-        soundController.current?.pause(true);
-      } else {
-        soundController.current?.pause();
-      }
-    },
-    []
-  );
-
-  const onVolumeChange = useCallback(
-    event => {
-      soundController.current?.changeVolume(Number(event.target.value));
-    },
-    [soundController]
-  );
-
-  return (
-    <div style={{ width: '100%' }}>
-      {!soundController.current && (
-        <div style={{ textAlign: 'center' }}>
-          Choose a sound &nbsp;
-          <input
-            type="file"
-            name="sound"
-            onChange={uploadAudio}
-            accept="audio/*"
-          />
-        </div>
-      )}
-      {loading && 'Loading...'}
-
-      <div style={{ width: '100%', height: '392px' }} id="waveContainer" />
-
-      {!loading && soundController.current && (
-        <div id="soundEditor">
-          <div id="controllPanel">
-            <input
-              type="range"
-              onChange={onVolumeChange}
-              defaultValue={1}
-              min={-1}
-              max={1}
-              step={0.01}
+            <FileUpload
+                onFileSelect={loadAudioFile}
+                isDisabled={!!soundController.current || loading}
             />
 
-            <button type="button" onClick={togglePlayer('play')}>
-              Play
-            </button>
+            <DragAndDrop
+                onFileSelect={loadAudioFile}
+                isDisabled={!!soundController.current || loading}
+            />
 
-            <button type="button" onClick={togglePlayer('pause')}>
-              Pause
-            </button>
+            {!loading && soundController.current && (
+                <div id="soundEditor">
+                    <div id="controllPanel">
+                        <VolumeControl onChange={onVolumeChange} />
 
-            <button type="button" onClick={togglePlayer('stop')}>
-              Stop
-            </button>
-          </div>
+                        <PlayerControls
+                            onPlay={togglePlayer('play')}
+                            onPause={togglePlayer('pause')}
+                            onStop={togglePlayer('stop')}
+                        />
+                    </div>
+                </div>
+            )}
         </div>
-      )}
-    </div>
-  );
+    );
 }
 
 export default Player;

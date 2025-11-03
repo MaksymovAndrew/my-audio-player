@@ -1,0 +1,33 @@
+.dragAndDrop {
+  width: 100%;
+  height: 392px;
+  margin-top: 30px;
+  border: 2px dashed #666;
+  background-color: transparent;
+  transition: all 0.3s ease;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dragging {
+  border: 2px dashed #ff1493;
+  background-color: rgba(255, 20, 147, 0.1);
+}
+
+.disabled {
+  border: none;
+}
+
+.placeholder {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #999;
+  font-size: 18px;
+  text-align: center;
+  pointer-events: none;
+  z-index: 1;
+}
