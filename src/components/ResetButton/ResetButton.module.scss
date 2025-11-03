@@ -1,0 +1,26 @@
+.resetButton {
+  display: block;
+  margin: 20px auto 10px;
+  padding: 12px 30px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #fff;
+  background: linear-gradient(135deg, #ff69b4 0%, #ff8cc8 100%);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 12px rgba(255, 105, 180, 0.3);
+  width: fit-content;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 18px rgba(255, 105, 180, 0.4);
+    background: linear-gradient(135deg, #ff69b4 0%, #ffb6e0 100%);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(255, 105, 180, 0.3);
+  }
+}

@@ -1,19 +1,36 @@
-import React from 'react';
+import React, { useState } from 'react';
+import styles from './VolumeControl.module.scss';
 
 interface VolumeControlProps {
     onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 function VolumeControl({ onChange }: VolumeControlProps) {
+    const [volume, setVolume] = useState(1);
+
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const value = Number(event.target.value);
+        setVolume(value);
+        onChange(event);
+    };
+
+
+    const volumePercent = Math.round(((volume + 1) / 2) * 100);
+
     return (
-        <input
-            type="range"
-            onChange={onChange}
-            defaultValue={1}
-            min={-1}
-            max={1}
-            step={0.01}
-        />
+        <div className={styles.volumeContainer}>
+            <label className={styles.label}>Volume:</label>
+            <input
+                type="range"
+                className={styles.slider}
+                onChange={handleChange}
+                defaultValue={1}
+                min={-1}
+                max={1}
+                step={0.01}
+            />
+            <span className={styles.value}>{volumePercent}</span>
+        </div>
     );
 }
 

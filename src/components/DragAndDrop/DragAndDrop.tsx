@@ -72,7 +72,7 @@ function DragAndDrop({ onFileSelect, isDisabled }: DragAndDropProps) {
             onDrop={handleDrop}
         >
             {!isDisabled && (
-                <div className={styles.placeholder}>Drag and drop audio files to get started</div>
+                <div className={styles.placeholder}>Drag and drop audio Files</div>
             )}
         </div>
     );

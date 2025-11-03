@@ -1,3 +1,5 @@
+import styles from './PlayerControls.module.scss';
+
 interface PlayerControlsProps {
     onPlay: () => void;
     onPause: () => void;
@@ -6,9 +8,10 @@ interface PlayerControlsProps {
 
 function PlayerControls({ onPlay, onPause, onStop }: PlayerControlsProps) {
     return (
-        <>
+        <div className={styles.controls}>
             <button
                 type="button"
+                className={`${styles.button} ${styles.playButton}`}
                 onClick={onPlay}
             >
                 Play
@@ -16,6 +19,7 @@ function PlayerControls({ onPlay, onPause, onStop }: PlayerControlsProps) {
 
             <button
                 type="button"
+                className={`${styles.button} ${styles.pauseButton}`}
                 onClick={onPause}
             >
                 Pause
@@ -23,11 +27,12 @@ function PlayerControls({ onPlay, onPause, onStop }: PlayerControlsProps) {
 
             <button
                 type="button"
+                className={`${styles.button} ${styles.stopButton}`}
                 onClick={onStop}
             >
                 Stop
             </button>
-        </>
+        </div>
     );
 }
 

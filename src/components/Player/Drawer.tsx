@@ -66,7 +66,7 @@ class Drawer {
     svg // const grid = svg
       .append('g')
       .attr('stroke-width', 0.5)
-      .attr('stroke', '#D6E5D6')
+      .attr('stroke', '#ffd6edb0')
       .call(g =>
         g
           .append('g')
@@ -99,14 +99,14 @@ class Drawer {
     const g = svg
       .append('g')
       .attr('transform', `translate(0, ${height / 2})`)
-      .attr('fill', '#03A300');
+      .attr('fill', '#ff1493');
 
     const band = (width - margin.left - margin.right) / audioData.length;
 
     g.selectAll('rect')
       .data(audioData)
       .join('rect')
-      .attr('fill', '#03A300')
+      .attr('fill', '#ff1493')
       .attr('height', d => yScale(d))
       .attr('width', () => band * padding)
       .attr('x', (_, i) => xScale(i))
@@ -126,7 +126,7 @@ class Drawer {
       // eslint-disable-next-line @typescript-eslint/no-shadow
       .call(g => g.select('.domain').remove())
       .attr('stroke-width', 0)
-      .style('color', '#95A17D')
+      .style('color', '#930860ff')
       .style('font-size', 11)
       .style('font-weight', 400)
       .call(d3.axisBottom(bandScale.copy()));

@@ -5,10 +5,12 @@ import FileUpload from '../FileUpload/FileUpload';
 import LoadingMessage from '../Loading/LoadingMessage';
 import PlayerControls from '../PlayerControls/PlayerControls';
 import VolumeControl from '../VolumeControl/VolumeControl';
+import ResetButton from '../ResetButton/ResetButton';
 
 function Player() {
     const soundController = useRef<undefined | SoundDriver>(undefined);
     const [loading, setLoading] = useState(false);
+    const [hasAudio, setHasAudio] = useState(false);
 
     const loadAudioFile = useCallback(async (audioFile: File) => {
         setLoading(true);
@@ -18,6 +20,7 @@ function Player() {
             await soundInstance.init(document.getElementById('waveContainer'));
             soundController.current = soundInstance;
             soundInstance.drawChart();
+            setHasAudio(true);
         } catch (err) {
             console.error('Failed to load audio:', err);
         } finally {
@@ -45,30 +48,42 @@ function Player() {
         [soundController]
     );
 
+    const handleReset = useCallback(() => {
+        soundController.current?.pause(true);
+        soundController.current = undefined;
+        setHasAudio(false);
+        const waveContainer = document.getElementById('waveContainer');
+        if (waveContainer) {
+            waveContainer.innerHTML = '';
+        }
+    }, []);
+
     return (
-        <div style={{ width: '100%' }}>
+        <div style={{ width: '100%', height: '100%', position: 'relative' }}>
             {loading && <LoadingMessage />}
 
             <FileUpload
                 onFileSelect={loadAudioFile}
-                isDisabled={!!soundController.current || loading}
+                isDisabled={hasAudio || loading}
             />
 
             <DragAndDrop
                 onFileSelect={loadAudioFile}
-                isDisabled={!!soundController.current || loading}
+                isDisabled={hasAudio || loading}
             />
 
-            {!loading && soundController.current && (
+            {!loading && hasAudio && (
                 <div id="soundEditor">
-                    <div id="controllPanel">
-                        <VolumeControl onChange={onVolumeChange} />
+                    <ResetButton onReset={handleReset} />
 
+                    <div id="controllPanel">
                         <PlayerControls
                             onPlay={togglePlayer('play')}
                             onPause={togglePlayer('pause')}
                             onStop={togglePlayer('stop')}
                         />
+
+                        <VolumeControl onChange={onVolumeChange} />
                     </div>
                 </div>
             )}
