@@ -1,8 +1,9 @@
-import Player from '../components/Player';
+import Player from '../components/Player/Player';
+import styles from './Homepage.module.scss';
 
 export default function HomePage() {
     return (
-        <div style={{ width: '100%', height: '100%' }}>
+        <div className={styles.container}>
             <Player />
         </div>
     );

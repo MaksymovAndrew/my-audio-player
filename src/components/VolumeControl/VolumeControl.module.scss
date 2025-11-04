@@ -2,13 +2,11 @@
   display: flex;
   align-items: center;
   gap: 15px;
-  margin: 20px auto 0;
   padding: 15px 25px;
   background: rgba(255, 20, 147, 0.05);
   border-radius: 12px;
   border: 1px solid rgba(255, 20, 147, 0.2);
-  width: fit-content;
-  max-width: 90%;
+  width: 80%;
 }
 
 .label {
@@ -20,7 +18,7 @@
 }
 
 .slider {
-  width: 180px;
+  width: 250px;
   height: 6px;
   border-radius: 5px;
   outline: none;
@@ -84,7 +82,7 @@
   font-size: 16px;
   font-weight: 600;
   color: #ff1493;
-  min-width: 35px;
+  width: 45px;
   text-align: center;
   padding: 4px 8px;
   background: rgba(255, 20, 147, 0.1);

@@ -6,6 +6,7 @@ import LoadingMessage from '../Loading/LoadingMessage';
 import PlayerControls from '../PlayerControls/PlayerControls';
 import VolumeControl from '../VolumeControl/VolumeControl';
 import ResetButton from '../ResetButton/ResetButton';
+import styles from './Player.module.scss';
 
 function Player() {
     const soundController = useRef<undefined | SoundDriver>(undefined);
@@ -59,7 +60,7 @@ function Player() {
     }, []);
 
     return (
-        <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+        <div className={styles.player}>
             {loading && <LoadingMessage />}
 
             <FileUpload
@@ -73,18 +74,16 @@ function Player() {
             />
 
             {!loading && hasAudio && (
-                <div id="soundEditor">
+                <div className={styles.soundEditor}>
                     <ResetButton onReset={handleReset} />
 
-                    <div id="controllPanel">
-                        <PlayerControls
-                            onPlay={togglePlayer('play')}
-                            onPause={togglePlayer('pause')}
-                            onStop={togglePlayer('stop')}
-                        />
+                    <PlayerControls
+                        onPlay={togglePlayer('play')}
+                        onPause={togglePlayer('pause')}
+                        onStop={togglePlayer('stop')}
+                    />
 
-                        <VolumeControl onChange={onVolumeChange} />
-                    </div>
+                    <VolumeControl onChange={onVolumeChange} />
                 </div>
             )}
         </div>
