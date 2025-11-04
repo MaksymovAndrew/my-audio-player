@@ -17,7 +17,7 @@ class SoundDriver {
 
   private pausedAt = 0;
 
-  private isRunning = false;
+  public isRunning = false;
 
   constructor(audioFile: Blob) {
     this.audiFile = audioFile;
@@ -77,8 +77,6 @@ class SoundDriver {
     this.bufferSource.buffer = this.audioBuffer;
 
     this.bufferSource.connect(this.gainNode);
-    this.bufferSource.connect(this.context.destination);
-
     this.gainNode.connect(this.context.destination);
 
     await this.context.resume();

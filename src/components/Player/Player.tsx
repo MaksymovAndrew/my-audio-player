@@ -1,6 +1,7 @@
-import React, { useCallback, useState, useRef } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import SoundDriver from './SoundDriver';
 import DragAndDrop from '../DragAndDrop/DragAndDrop';
+import WaveformContainer from '../WaveformContainer/WaveformContainer';
 import FileUpload from '../FileUpload/FileUpload';
 import LoadingMessage from '../Loading/LoadingMessage';
 import PlayerControls from '../PlayerControls/PlayerControls';
@@ -9,55 +10,72 @@ import ResetButton from '../ResetButton/ResetButton';
 import styles from './Player.module.scss';
 
 function Player() {
-    const soundController = useRef<undefined | SoundDriver>(undefined);
+    const [soundDriver, setSoundDriver] = useState<SoundDriver | null>(null);
     const [loading, setLoading] = useState(false);
-    const [hasAudio, setHasAudio] = useState(false);
+    const [pendingFile, setPendingFile] = useState<File | null>(null);
 
-    const loadAudioFile = useCallback(async (audioFile: File) => {
+    useEffect(() => {
+        if (!pendingFile) return;
+
+        let currentDriver: SoundDriver | null = null;
+
+        const initAudio = async () => {
+            const soundInstance = new SoundDriver(pendingFile);
+            try {
+                await soundInstance.init(document.getElementById('waveContainer'));
+                soundInstance.drawChart();
+                currentDriver = soundInstance;
+                setSoundDriver(soundInstance);
+            } catch (err) {
+                console.error('Failed to load audio:', err);
+            } finally {
+                setLoading(false);
+                setPendingFile(null);
+            }
+        };
+
+        initAudio();
+
+        return () => {
+            if (currentDriver?.isRunning) {
+                currentDriver.pause(true);
+            }
+        };
+    }, [pendingFile]);
+
+    const loadAudioFile = useCallback((audioFile: File) => {
         setLoading(true);
-
-        const soundInstance = new SoundDriver(audioFile);
-        try {
-            await soundInstance.init(document.getElementById('waveContainer'));
-            soundController.current = soundInstance;
-            soundInstance.drawChart();
-            setHasAudio(true);
-        } catch (err) {
-            console.error('Failed to load audio:', err);
-        } finally {
-            setLoading(false);
-        }
+        setPendingFile(audioFile);
     }, []);
 
     const togglePlayer = useCallback(
         (type: string) => () => {
             if (type === 'play') {
-                soundController.current?.play();
+                soundDriver?.play();
             } else if (type === 'stop') {
-                soundController.current?.pause(true);
+                soundDriver?.pause(true);
             } else {
-                soundController.current?.pause();
+                soundDriver?.pause();
             }
         },
-        []
+        [soundDriver]
     );
 
     const onVolumeChange = useCallback(
         (event: React.ChangeEvent<HTMLInputElement>) => {
-            soundController.current?.changeVolume(Number(event.target.value));
+            soundDriver?.changeVolume(Number(event.target.value));
         },
-        [soundController]
+        [soundDriver]
     );
 
     const handleReset = useCallback(() => {
-        soundController.current?.pause(true);
-        soundController.current = undefined;
-        setHasAudio(false);
+        soundDriver?.pause(true);
+        setSoundDriver(null);
         const waveContainer = document.getElementById('waveContainer');
         if (waveContainer) {
             waveContainer.innerHTML = '';
         }
-    }, []);
+    }, [soundDriver]);
 
     return (
         <div className={styles.player}>
@@ -65,15 +83,19 @@ function Player() {
 
             <FileUpload
                 onFileSelect={loadAudioFile}
-                isDisabled={hasAudio || loading}
+                isDisabled={soundDriver !== null || loading}
             />
 
-            <DragAndDrop
-                onFileSelect={loadAudioFile}
-                isDisabled={hasAudio || loading}
-            />
+            {!soundDriver && !pendingFile ? (
+                <DragAndDrop
+                    onFileSelect={loadAudioFile}
+                    isDisabled={loading}
+                />
+            ) : (
+                <WaveformContainer />
+            )}
 
-            {!loading && hasAudio && (
+            {!loading && soundDriver && (
                 <div className={styles.soundEditor}>
                     <ResetButton onReset={handleReset} />
 
