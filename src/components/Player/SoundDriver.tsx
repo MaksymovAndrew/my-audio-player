@@ -77,8 +77,6 @@ class SoundDriver {
     this.bufferSource.buffer = this.audioBuffer;
 
     this.bufferSource.connect(this.gainNode);
-    this.bufferSource.connect(this.context.destination);
-
     this.gainNode.connect(this.context.destination);
 
     await this.context.resume();
