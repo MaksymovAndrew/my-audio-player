@@ -1,24 +1,38 @@
-import React, { useCallback, useState, useRef } from 'react';
+import React, { useCallback, useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAudio } from '../../context/AudioContext';
 import SoundDriver from './SoundDriver';
-import DragAndDrop from '../DragAndDrop/DragAndDrop';
-import FileUpload from '../FileUpload/FileUpload';
 import LoadingMessage from '../Loading/LoadingMessage';
 import PlayerControls from '../PlayerControls/PlayerControls';
 import VolumeControl from '../VolumeControl/VolumeControl';
 import ResetButton from '../ResetButton/ResetButton';
+import WaveformContainer from '../WaveformContainer/WaveformContainer';
 import styles from './Player.module.scss';
 
 function Player() {
     const soundController = useRef<undefined | SoundDriver>(undefined);
     const [loading, setLoading] = useState(false);
     const [hasAudio, setHasAudio] = useState(false);
+    const { audioFile, setAudioFile } = useAudio();
+    const navigate = useNavigate();
+    const isInitializing = useRef(false);
 
-    const loadAudioFile = useCallback(async (audioFile: File) => {
+    const loadAudioFile = useCallback(async (file: File) => {
+        if (isInitializing.current) {
+            return;
+        }
+
+        isInitializing.current = true;
         setLoading(true);
 
-        const soundInstance = new SoundDriver(audioFile);
+        const waveContainer = document.getElementById('waveContainer');
+        if (waveContainer) {
+            waveContainer.innerHTML = '';
+        }
+
+        const soundInstance = new SoundDriver(file);
         try {
-            await soundInstance.init(document.getElementById('waveContainer'));
+            await soundInstance.init(waveContainer);
             soundController.current = soundInstance;
             soundInstance.drawChart();
             setHasAudio(true);
@@ -26,8 +40,15 @@ function Player() {
             console.error('Failed to load audio:', err);
         } finally {
             setLoading(false);
+            isInitializing.current = false;
         }
     }, []);
+
+    useEffect(() => {
+        if (audioFile && !hasAudio && !isInitializing.current) {
+            loadAudioFile(audioFile);
+        }
+    }, [audioFile, hasAudio, loadAudioFile]);
 
     const togglePlayer = useCallback(
         (type: string) => () => {
@@ -50,28 +71,22 @@ function Player() {
     );
 
     const handleReset = useCallback(() => {
-        soundController.current?.pause(true);
         soundController.current = undefined;
         setHasAudio(false);
+        setAudioFile(null);
+        isInitializing.current = false;
         const waveContainer = document.getElementById('waveContainer');
         if (waveContainer) {
             waveContainer.innerHTML = '';
         }
-    }, []);
+        navigate('/');
+    }, [navigate, setAudioFile]);
 
     return (
         <div className={styles.player}>
             {loading && <LoadingMessage />}
 
-            <FileUpload
-                onFileSelect={loadAudioFile}
-                isDisabled={hasAudio || loading}
-            />
-
-            <DragAndDrop
-                onFileSelect={loadAudioFile}
-                isDisabled={hasAudio || loading}
-            />
+            <WaveformContainer />
 
             {!loading && hasAudio && (
                 <div className={styles.soundEditor}>
