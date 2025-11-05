@@ -15,7 +15,7 @@ function VolumeControl({ onChange }: VolumeControlProps) {
     };
 
 
-    const volumePercent = Math.round(((volume + 1) / 2) * 100);
+    const volumePercent = Math.round(volume * 100);
 
     return (
         <div className={styles.volumeContainer}>
@@ -25,7 +25,7 @@ function VolumeControl({ onChange }: VolumeControlProps) {
                 className={styles.slider}
                 onChange={handleChange}
                 defaultValue={1}
-                min={-1}
+                min={0}
                 max={1}
                 step={0.01}
             />
