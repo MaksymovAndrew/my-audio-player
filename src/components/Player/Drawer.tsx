@@ -6,6 +6,16 @@ class Drawer {
 
   private parent: HTMLElement;
 
+  private svg?: d3.Selection<SVGSVGElement, undefined, null, undefined>;
+
+  private cursorGroup?: d3.Selection<SVGGElement, undefined, null, undefined>;
+
+  private svgWidth = 0;
+
+  private svgHeight = 0;
+
+  private margin = { top: 0, bottom: 0, left: 10, right: 10 };
+
   constructor(buffer: AudioBuffer, parent: HTMLElement) {
     this.buffer = buffer;
     this.parent = parent;
@@ -35,14 +45,17 @@ class Drawer {
 
   public generateWaveform(
     audioData: number[],
-    options: IOptions // need to describe interface
+    options: IOptions = {}
   ) {
     const {
-      margin = { top: 0, bottom: 0, left: 0, right: 0 },
+      margin = this.margin,
       height = this.parent.clientHeight,
       width = this.parent.clientWidth,
       padding = 1
     } = options;
+
+    this.svgWidth = width;
+    this.svgHeight = height;
 
     const domain = d3.extent(audioData);
 
@@ -153,8 +166,50 @@ class Drawer {
 
   public init() {
     const audioData = this.clearData();
-    const node = this.generateWaveform(audioData, {});
+    const node = this.generateWaveform(audioData);
+    this.svg = node;
     this.parent.appendChild(node.node() as Element);
+    this.createCursor();
+  }
+
+  private createCursor() {
+    if (!this.svg) return;
+
+    this.cursorGroup = this.svg
+      .append('g')
+      .attr('transform', `translate(${this.margin.left}, 0)`)
+      .style('will-change', 'transform') // creates separate gpu layer for performance
+      .style('isolation', 'isolate'); //  prevents color blending artifacts
+
+    this.cursorGroup
+      .append('line')
+      .attr('x1', 0)
+      .attr('x2', 0)
+      .attr('y1', 0)
+      .attr('y2', this.svgHeight)
+      .attr('stroke', '#ff1493')
+      .attr('stroke-width', 2);
+
+    this.cursorGroup
+      .append('polygon')
+      .attr('points', '-3,0 3,0 0,6')
+      .attr('fill', '#ff1493');
+  }
+
+  public updateCursor(currentTime: number) {
+    if (!this.cursorGroup) return;
+
+    const duration = this.buffer.duration;
+    const graphWidth = this.svgWidth - this.margin.left - this.margin.right;
+    const position = this.margin.left + (currentTime / duration) * graphWidth;
+
+    this.cursorGroup.attr('transform', `translate(${position}, 0)`);
+  }
+
+  public resetCursor() {
+    if (!this.cursorGroup) return;
+
+    this.cursorGroup.attr('transform', `translate(${this.margin.left}, 0)`);
   }
 }
 

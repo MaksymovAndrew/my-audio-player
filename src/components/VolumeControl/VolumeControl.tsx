@@ -14,7 +14,6 @@ function VolumeControl({ onChange }: VolumeControlProps) {
         onChange(event);
     };
 
-
     const volumePercent = Math.round(volume * 100);
 
     return (

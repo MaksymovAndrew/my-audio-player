@@ -16,33 +16,42 @@ function Player() {
     const { audioFile, setAudioFile } = useAudio();
     const navigate = useNavigate();
     const isInitializing = useRef(false);
+    const animationFrameId = useRef<number | null>(null);
 
-    const loadAudioFile = useCallback(async (file: File) => {
-        if (isInitializing.current) {
-            return;
-        }
-
-        isInitializing.current = true;
-        setLoading(true);
-
+    const clearWaveContainer = useCallback(() => {
         const waveContainer = document.getElementById('waveContainer');
         if (waveContainer) {
             waveContainer.innerHTML = '';
         }
-
-        const soundInstance = new SoundDriver(file);
-        try {
-            await soundInstance.init(waveContainer);
-            soundController.current = soundInstance;
-            soundInstance.drawChart();
-            setHasAudio(true);
-        } catch (err) {
-            console.error('Failed to load audio:', err);
-        } finally {
-            setLoading(false);
-            isInitializing.current = false;
-        }
+        return waveContainer;
     }, []);
+
+    const loadAudioFile = useCallback(
+        async (file: File) => {
+            if (isInitializing.current) {
+                return;
+            }
+
+            isInitializing.current = true;
+            setLoading(true);
+
+            const waveContainer = clearWaveContainer();
+
+            const soundInstance = new SoundDriver(file);
+            try {
+                await soundInstance.init(waveContainer);
+                soundController.current = soundInstance;
+                soundInstance.drawChart();
+                setHasAudio(true);
+            } catch (err) {
+                console.error('Failed to load audio:', err);
+            } finally {
+                setLoading(false);
+                isInitializing.current = false;
+            }
+        },
+        [clearWaveContainer]
+    );
 
     useEffect(() => {
         if (audioFile && !hasAudio && !isInitializing.current) {
@@ -50,37 +59,56 @@ function Player() {
         }
     }, [audioFile, hasAudio, loadAudioFile]);
 
+    const animateCursor = useCallback(() => {
+        soundController.current?.updateCursor();
+
+        if (soundController.current?.getIsRunning()) {
+            animationFrameId.current = requestAnimationFrame(animateCursor);
+        }
+    }, []);
+
+    const stopAnimation = useCallback(() => {
+        if (animationFrameId.current !== null) {
+            cancelAnimationFrame(animationFrameId.current);
+            animationFrameId.current = null;
+        }
+    }, []);
+
     const togglePlayer = useCallback(
-        (type: string) => () => {
+        (type: string) => async () => {
             if (type === 'play') {
-                soundController.current?.play();
+                await soundController.current?.play();
+                animationFrameId.current = requestAnimationFrame(animateCursor);
             } else if (type === 'stop') {
-                soundController.current?.pause(true);
+                await soundController.current?.pause(true);
+                stopAnimation();
             } else {
-                soundController.current?.pause();
+                await soundController.current?.pause();
+                stopAnimation();
             }
         },
-        []
+        [animateCursor, stopAnimation]
     );
 
-    const onVolumeChange = useCallback(
-        (event: React.ChangeEvent<HTMLInputElement>) => {
-            soundController.current?.changeVolume(Number(event.target.value));
-        },
-        [soundController]
-    );
+    const onVolumeChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+        soundController.current?.changeVolume(Number(event.target.value));
+    }, []);
 
     const handleReset = useCallback(() => {
+        stopAnimation();
         soundController.current = undefined;
         setHasAudio(false);
         setAudioFile(null);
         isInitializing.current = false;
-        const waveContainer = document.getElementById('waveContainer');
-        if (waveContainer) {
-            waveContainer.innerHTML = '';
-        }
+        clearWaveContainer();
         navigate('/');
-    }, [navigate, setAudioFile]);
+    }, [navigate, setAudioFile, stopAnimation, clearWaveContainer]);
+
+    useEffect(() => {
+        return () => {
+            stopAnimation();
+        };
+    }, []);
 
     return (
         <div className={styles.player}>

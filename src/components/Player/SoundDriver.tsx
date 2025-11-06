@@ -19,6 +19,8 @@ class SoundDriver {
 
   private isRunning = false;
 
+  private currentVolume = 1;
+
   constructor(audioFile: Blob) {
     this.audiFile = audioFile;
     this.context = new AudioContext();
@@ -72,6 +74,7 @@ class SoundDriver {
     }
 
     this.gainNode = this.context.createGain();
+    this.gainNode.gain.value = this.currentVolume;
 
     this.bufferSource = this.context.createBufferSource();
     this.bufferSource.buffer = this.audioBuffer;
@@ -80,12 +83,17 @@ class SoundDriver {
     this.gainNode.connect(this.context.destination);
 
     await this.context.resume();
-    this.bufferSource.start(0, this.pausedAt);
 
-    this.startedAt = this.context.currentTime - this.pausedAt;
+    const startPosition = this.pausedAt;
+
+    this.bufferSource.start(0, startPosition);
+
+    this.startedAt = this.context.currentTime - startPosition;
     this.pausedAt = 0;
 
     this.isRunning = true;
+
+    this.drawer?.updateCursor(startPosition);
   }
 
   public async pause(reset?: boolean) {
@@ -103,9 +111,15 @@ class SoundDriver {
     this.gainNode.disconnect();
 
     this.isRunning = false;
+
+    if (reset) {
+      this.drawer?.resetCursor();
+    }
   }
 
   public changeVolume(volume: number) {
+    this.currentVolume = volume;
+
     if (!this.gainNode) {
       return;
     }
@@ -115,6 +129,27 @@ class SoundDriver {
 
   public drawChart() {
     this.drawer?.init();
+  }
+
+  public getCurrentTime(): number {
+    if (this.isRunning) {
+      return this.context.currentTime - this.startedAt;
+    }
+    return this.pausedAt;
+  }
+
+  public getDuration(): number {
+    return this.audioBuffer?.duration || 0;
+  }
+
+  public getIsRunning(): boolean {
+    return this.isRunning;
+  }
+
+  public updateCursor() {
+    if (this.isRunning) {
+      this.drawer?.updateCursor(this.getCurrentTime());
+    }
   }
 }
 

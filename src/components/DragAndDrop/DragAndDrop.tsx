@@ -66,14 +66,11 @@ function DragAndDrop({ onFileSelect, isDisabled }: DragAndDropProps) {
             className={`${styles.dragAndDrop} ${isDragging ? styles.dragging : ''} ${
                 isDisabled ? styles.disabled : ''
             }`}
-            id="waveContainer"
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
         >
-            {!isDisabled && (
-                <div className={styles.placeholder}>Drag and drop audio Files</div>
-            )}
+            {!isDisabled && <div className={styles.placeholder}>Drag and drop audio Files</div>}
         </div>
     );
 }
