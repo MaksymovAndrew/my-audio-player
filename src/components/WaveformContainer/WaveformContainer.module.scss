@@ -3,4 +3,8 @@
   height: 392px;
   margin-top: 30px;
   position: relative;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
