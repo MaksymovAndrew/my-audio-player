@@ -18,47 +18,6 @@ function Player() {
     const isInitializing = useRef(false);
     const animationFrameId = useRef<number | null>(null);
 
-    const clearWaveContainer = useCallback(() => {
-        const waveContainer = document.getElementById('waveContainer');
-        if (waveContainer) {
-            waveContainer.innerHTML = '';
-        }
-        return waveContainer;
-    }, []);
-
-    const loadAudioFile = useCallback(
-        async (file: File) => {
-            if (isInitializing.current) {
-                return;
-            }
-
-            isInitializing.current = true;
-            setLoading(true);
-
-            const waveContainer = clearWaveContainer();
-
-            const soundInstance = new SoundDriver(file);
-            try {
-                await soundInstance.init(waveContainer);
-                soundController.current = soundInstance;
-                soundInstance.drawChart();
-                setHasAudio(true);
-            } catch (err) {
-                console.error('Failed to load audio:', err);
-            } finally {
-                setLoading(false);
-                isInitializing.current = false;
-            }
-        },
-        [clearWaveContainer]
-    );
-
-    useEffect(() => {
-        if (audioFile && !hasAudio && !isInitializing.current) {
-            loadAudioFile(audioFile);
-        }
-    }, [audioFile, hasAudio, loadAudioFile]);
-
     const animateCursor = useCallback(() => {
         soundController.current?.updateCursor();
 
@@ -73,6 +32,49 @@ function Player() {
             animationFrameId.current = null;
         }
     }, []);
+
+    const loadAudioFile = useCallback(
+        async (file: File) => {
+            if (isInitializing.current) {
+                return;
+            }
+
+            isInitializing.current = true;
+            setLoading(true);
+
+            soundController.current?.destroy(); //kill previous audio (just in case)
+
+            const waveContainer = document.getElementById('waveContainer');
+            if (!waveContainer) {
+                throw new Error('Wave container not found');
+            }
+
+            const soundInstance = new SoundDriver(file);
+            try {
+                await soundInstance.init(waveContainer);
+                soundController.current = soundInstance;
+
+                soundInstance.setAnimationCallbacks(() => {
+                    animationFrameId.current = requestAnimationFrame(animateCursor);
+                }, stopAnimation);
+
+                soundInstance.drawChart();
+                setHasAudio(true);
+            } catch (err) {
+                console.error('Failed to load audio:', err);
+            } finally {
+                setLoading(false);
+                isInitializing.current = false;
+            }
+        },
+        [animateCursor, stopAnimation]
+    );
+
+    useEffect(() => {
+        if (audioFile && !hasAudio && !isInitializing.current) {
+            loadAudioFile(audioFile);
+        }
+    }, [audioFile, hasAudio, loadAudioFile]);
 
     const togglePlayer = useCallback(
         (type: string) => async () => {
@@ -96,13 +98,13 @@ function Player() {
 
     const handleReset = useCallback(() => {
         stopAnimation();
+        soundController.current?.destroy();
         soundController.current = undefined;
         setHasAudio(false);
         setAudioFile(null);
         isInitializing.current = false;
-        clearWaveContainer();
         navigate('/');
-    }, [navigate, setAudioFile, stopAnimation, clearWaveContainer]);
+    }, [navigate, setAudioFile, stopAnimation]);
 
     useEffect(() => {
         return () => {

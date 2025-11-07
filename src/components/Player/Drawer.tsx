@@ -3,27 +3,33 @@ import type { IOptions } from './interface';
 
 class Drawer {
   private buffer: AudioBuffer;
-
   private parent: HTMLElement;
 
   private svg?: d3.Selection<SVGSVGElement, undefined, null, undefined>;
-
+  private graphGroup?: d3.Selection<SVGGElement, undefined, null, undefined>;
   private cursorGroup?: d3.Selection<SVGGElement, undefined, null, undefined>;
 
-  private svgWidth = 0;
-
-  private svgHeight = 0;
-
+  private graphWidth = 0;
+  private graphHeight = 0;
   private margin = { top: 0, bottom: 0, left: 10, right: 10 };
 
-  constructor(buffer: AudioBuffer, parent: HTMLElement) {
+  private onCursorDragCallback?: (time: number) => void;
+  private isDragging = false;
+  private cursorPosition = 0;
+
+  private get duration(): number {
+    return this.buffer.duration;
+  }
+
+  constructor(buffer: AudioBuffer, parent: HTMLElement, onCursorDrag?: (time: number) => void) {
     this.buffer = buffer;
     this.parent = parent;
+    this.onCursorDragCallback = onCursorDrag;
   }
 
   private getTimeDomain() {
-    const step = 30; // 30 seconds
-    const steps = Math.ceil(this.buffer.duration / step);
+    const step = 15; // 15 seconds
+    const steps = Math.ceil(this.duration / step);
 
     return [...new Array(steps)].map((_, index) => {
       const date = new Date(1970, 0, 1, 0, 0, 0, 0);
@@ -54,29 +60,33 @@ class Drawer {
       padding = 1
     } = options;
 
-    this.svgWidth = width;
-    this.svgHeight = height;
+    this.graphWidth = width - margin.left - margin.right;
+    this.graphHeight = height - margin.top - margin.bottom;
 
     const domain = d3.extent(audioData);
 
     const xScale = d3
       .scaleLinear()
       .domain([0, audioData.length - 1])
-      .range([margin.left, width - margin.right]);
+      .range([0, this.graphWidth]);
 
     const yScale = d3
       .scaleLinear()
       .domain(domain.map(i => Number(i)))
-      .range([margin.top, height - margin.bottom]);
+      .range([margin.top, margin.top + this.graphHeight]);
 
     const svg = d3.create('svg');
 
     svg
-      .style('width', this.parent.clientWidth)
-      .style('height', this.parent.clientHeight)
+      .style('width', width)
+      .style('height', height)
       .style('display', 'block');
 
-    svg // const grid = svg
+    const graphGroup = svg
+      .append('g')
+      .attr('transform', `translate(${margin.left}, 0)`);
+
+    graphGroup // grid
       .append('g')
       .attr('stroke-width', 0.5)
       .attr('stroke', '#ffd6edb0')
@@ -89,7 +99,7 @@ class Drawer {
           .attr('x1', (d: d3.NumberValue) => 0.5 + xScale(d))
           .attr('x2', (d: d3.NumberValue) => 0.5 + xScale(d))
           .attr('y1', 0)
-          .attr('y2', this.parent.clientHeight)
+          .attr('y2', height)
       )
       .call(g =>
         g
@@ -100,21 +110,21 @@ class Drawer {
           .attr('y1', (d: d3.NumberValue) => yScale(d))
           .attr('y2', (d: d3.NumberValue) => yScale(d))
           .attr('x1', 0)
-          .attr('x2', this.parent.clientWidth)
+          .attr('x2', width)
       );
 
-    svg
+    graphGroup // drag everywhere
       .append('rect')
-      .attr('width', width)
+      .attr('width', this.graphWidth)
       .attr('height', height)
       .attr('fill', 'rgba(255, 255, 255, 0)');
 
-    const g = svg
+    const g = graphGroup // center graph
       .append('g')
       .attr('transform', `translate(0, ${height / 2})`)
       .attr('fill', '#ff1493');
 
-    const band = (width - margin.left - margin.right) / audioData.length;
+    const band = this.graphWidth / audioData.length;
 
     g.selectAll('rect')
       .data(audioData)
@@ -132,9 +142,9 @@ class Drawer {
     const bandScale = d3
       .scaleBand()
       .domain(bands)
-      .range([margin.top, this.parent.clientWidth]);
+      .range([0, this.graphWidth]);
 
-    svg
+    graphGroup
       .append('g')
       // eslint-disable-next-line @typescript-eslint/no-shadow
       .call(g => g.select('.domain').remove())
@@ -143,6 +153,8 @@ class Drawer {
       .style('font-size', 11)
       .style('font-weight', 400)
       .call(d3.axisBottom(bandScale.copy()));
+
+    this.graphGroup = graphGroup;
 
     return svg;
   }
@@ -173,43 +185,89 @@ class Drawer {
   }
 
   private createCursor() {
-    if (!this.svg) return;
+    if (!this.graphGroup) return;
 
-    this.cursorGroup = this.svg
+    this.cursorPosition = 0;
+
+    this.cursorGroup = this.graphGroup
       .append('g')
-      .attr('transform', `translate(${this.margin.left}, 0)`)
+      .attr('transform', `translate(${this.cursorPosition}, 0)`)
       .style('will-change', 'transform') // creates separate gpu layer for performance
-      .style('isolation', 'isolate'); //  prevents color blending artifacts
+      .style('isolation', 'isolate') //  prevents color blending artifacts
+      .style('cursor', 'ew-resize')
+      .call(g =>
+        g.append('line')
+          .attr('x1', 0)
+          .attr('x2', 0)
+          .attr('y1', 0)
+          .attr('y2', this.graphHeight)
+          .attr('stroke', '#ff1493')
+          .attr('stroke-width', 2)
+      )
+      .call(g =>
+        g.append('polygon')
+          .attr('points', '-5,0 5,0 0,7')
+          .attr('fill', '#ff1493')
+      );
 
-    this.cursorGroup
-      .append('line')
-      .attr('x1', 0)
-      .attr('x2', 0)
-      .attr('y1', 0)
-      .attr('y2', this.svgHeight)
-      .attr('stroke', '#ff1493')
-      .attr('stroke-width', 2);
+    this.setupDragBehavior();
+  }
 
-    this.cursorGroup
-      .append('polygon')
-      .attr('points', '-3,0 3,0 0,6')
-      .attr('fill', '#ff1493');
+  private setupDragBehavior() {
+    if (!this.cursorGroup || !this.onCursorDragCallback) return;
+
+    const endDrag = () => {
+      if (!this.isDragging) return;
+
+      this.svg?.style('cursor', 'default');
+
+      // final time when stopped dragging
+      const time = (this.cursorPosition / this.graphWidth) * this.duration;
+      this.onCursorDragCallback?.(time);
+
+      this.isDragging = false;
+    };
+
+    const drag = d3.drag<SVGGElement, undefined>()
+      .on('start', () => {
+        this.isDragging = true;
+        this.svg?.style('cursor', 'ew-resize');
+      })
+      .on('drag', (event: d3.D3DragEvent<SVGGElement, undefined, undefined>) => {
+        let newX = this.cursorPosition + event.dx;
+        newX = Math.max(0, Math.min(newX, this.graphWidth)); // graph dimension
+
+        this.cursorPosition = newX;
+        this.cursorGroup?.attr('transform', `translate(${newX}, 0)`)
+      })
+      .on('end', endDrag);
+
+    this.cursorGroup.call(drag);
   }
 
   public updateCursor(currentTime: number) {
     if (!this.cursorGroup) return;
+    if (this.isDragging) return;
 
-    const duration = this.buffer.duration;
-    const graphWidth = this.svgWidth - this.margin.left - this.margin.right;
-    const position = this.margin.left + (currentTime / duration) * graphWidth;
-
+    const position = (currentTime / this.duration) * this.graphWidth;
+    this.cursorPosition = position;
     this.cursorGroup.attr('transform', `translate(${position}, 0)`);
   }
 
   public resetCursor() {
     if (!this.cursorGroup) return;
 
-    this.cursorGroup.attr('transform', `translate(${this.margin.left}, 0)`);
+    this.cursorPosition = 0;
+    this.cursorGroup.attr('transform', `translate(${this.cursorPosition}, 0)`);
+  }
+
+  public destroy() {
+    this.cursorGroup?.on('.drag', null);
+    this.svg?.remove();
+
+    this.svg = undefined;
+    this.graphGroup = undefined;
+    this.cursorGroup = undefined;
   }
 }
 
