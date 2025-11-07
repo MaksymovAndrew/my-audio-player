@@ -84,6 +84,15 @@ class SoundDriver {
     this.bufferSource.connect(this.gainNode);
     this.gainNode.connect(this.context.destination);
 
+    this.bufferSource.onended = () => {
+      if (this.isRunning && this.audioBuffer) {
+        const currentTime = this.getCurrentTime();
+        if (currentTime >= this.audioBuffer.duration - 0.1) { //in case of incorrect rounding
+          this.pause(true);
+        }
+      }
+    };
+
     await this.context.resume();
 
     const startPosition = this.pausedAt;
@@ -105,7 +114,7 @@ class SoundDriver {
       );
     }
 
-    this.pausedAt = reset ? 0 : this.context.currentTime - this.startedAt;
+    this.pausedAt = reset ? 0 : this.getCurrentTime();
     await this.stopAudio();
 
     if (reset) {
