@@ -17,6 +17,8 @@ class Drawer {
   private isDragging = false;
   private cursorPosition = 0;
 
+  private animationTimer?: d3.Timer;
+
   private get duration(): number {
     return this.buffer.duration;
   }
@@ -246,12 +248,26 @@ class Drawer {
   }
 
   public updateCursor(currentTime: number) {
-    if (!this.cursorGroup) return;
-    if (this.isDragging) return;
+    if (!this.cursorGroup || this.isDragging) return;
 
     const position = (currentTime / this.duration) * this.graphWidth;
     this.cursorPosition = position;
     this.cursorGroup.attr('transform', `translate(${position}, 0)`);
+  }
+
+  public startAnimation(getCurrentTime: () => number) {
+    this.stopAnimation(); // no duplicate timers if called multiple times (just in case)
+
+    this.animationTimer = d3.timer(() => {
+      this.updateCursor(getCurrentTime());
+    });
+  }
+
+  public stopAnimation() {
+    if (this.animationTimer) {
+      this.animationTimer.stop();
+      this.animationTimer = undefined;
+    }
   }
 
   public resetCursor() {
@@ -262,6 +278,7 @@ class Drawer {
   }
 
   public destroy() {
+    this.stopAnimation();
     this.cursorGroup?.on('.drag', null);
     this.svg?.remove();
 

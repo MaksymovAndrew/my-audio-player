@@ -16,22 +16,6 @@ function Player() {
     const { audioFile, setAudioFile } = useAudio();
     const navigate = useNavigate();
     const isInitializing = useRef(false);
-    const animationFrameId = useRef<number | null>(null);
-
-    const animateCursor = useCallback(() => {
-        soundController.current?.updateCursor();
-
-        if (soundController.current?.getIsRunning()) {
-            animationFrameId.current = requestAnimationFrame(animateCursor);
-        }
-    }, []);
-
-    const stopAnimation = useCallback(() => {
-        if (animationFrameId.current !== null) {
-            cancelAnimationFrame(animationFrameId.current);
-            animationFrameId.current = null;
-        }
-    }, []);
 
     const loadAudioFile = useCallback(
         async (file: File) => {
@@ -54,10 +38,6 @@ function Player() {
                 await soundInstance.init(waveContainer);
                 soundController.current = soundInstance;
 
-                soundInstance.setAnimationCallbacks(() => {
-                    animationFrameId.current = requestAnimationFrame(animateCursor);
-                }, stopAnimation);
-
                 soundInstance.drawChart();
                 setHasAudio(true);
             } catch (err) {
@@ -67,7 +47,7 @@ function Player() {
                 isInitializing.current = false;
             }
         },
-        [animateCursor, stopAnimation]
+        []
     );
 
     useEffect(() => {
@@ -80,16 +60,13 @@ function Player() {
         (type: string) => async () => {
             if (type === 'play') {
                 await soundController.current?.play();
-                animationFrameId.current = requestAnimationFrame(animateCursor);
             } else if (type === 'stop') {
                 await soundController.current?.pause(true);
-                stopAnimation();
             } else {
                 await soundController.current?.pause();
-                stopAnimation();
             }
         },
-        [animateCursor, stopAnimation]
+        []
     );
 
     const onVolumeChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
@@ -97,18 +74,17 @@ function Player() {
     }, []);
 
     const handleReset = useCallback(() => {
-        stopAnimation();
         soundController.current?.destroy();
         soundController.current = undefined;
         setHasAudio(false);
         setAudioFile(null);
         isInitializing.current = false;
         navigate('/');
-    }, [navigate, setAudioFile, stopAnimation]);
+    }, [navigate, setAudioFile]);
 
     useEffect(() => {
         return () => {
-            stopAnimation();
+            soundController.current?.destroy();
         };
     }, []);
 

@@ -21,24 +21,16 @@ class SoundDriver {
 
   private currentVolume = 1;
 
-  private startAnimationCallback?: () => void;
-  private stopAnimationCallback?: () => void;
-
   constructor(audioFile: Blob) {
     this.audioFile = audioFile;
     this.context = new AudioContext();
   }
 
-  public setAnimationCallbacks(start: () => void, stop: () => void) {
-    this.startAnimationCallback = start;
-    this.stopAnimationCallback = stop;
-  }
-
   static showError(error: string) {
-    return error;
     alert(
       'SoundParser constructor error. Can not read audio file as ArrayBuffer'
     );
+    return error;
   }
 
   public init(parent: HTMLElement | null) {
@@ -103,7 +95,7 @@ class SoundDriver {
 
     this.isRunning = true;
 
-    this.drawer?.updateCursor(startPosition);
+    this.drawer?.startAnimation(() => this.getCurrentTime());
   }
 
   public async pause(reset?: boolean) {
@@ -125,6 +117,8 @@ class SoundDriver {
     if (!this.bufferSource || !this.gainNode) {
       return;
     }
+
+    this.drawer?.stopAnimation();
 
     await this.context.suspend();
     this.bufferSource.stop();
@@ -154,32 +148,16 @@ class SoundDriver {
     return this.pausedAt;
   }
 
-  public getDuration(): number {
-    return this.audioBuffer?.duration || 0;
-  }
-
-  public getIsRunning(): boolean {
-    return this.isRunning;
-  }
-
-  public updateCursor() {
-    if (this.isRunning) {
-      this.drawer?.updateCursor(this.getCurrentTime());
-    }
-  }
-
   public async onCursorDrag(time: number) {
     if (!this.audioBuffer) {
       throw new Error('onCursorDrag error. Audio buffer is not exists.');
     }
 
-    const duration = this.getDuration();
-    const clampedTime = Math.max(0, Math.min(time, duration)); // track dimension
+    const clampedTime = Math.max(0, Math.min(time, this.audioBuffer.duration)); // song dimention
 
     const wasRunning = this.isRunning;
 
     if (wasRunning) {
-      this.stopAnimationCallback?.();
       await this.stopAudio(); //kill old audio
     }
 
@@ -188,7 +166,6 @@ class SoundDriver {
 
     if (wasRunning) {
       await this.play();
-      this.startAnimationCallback?.();
     }
   }
 
