@@ -11,7 +11,7 @@ class Drawer {
 
   private graphWidth = 0;
   private graphHeight = 0;
-  private margin = { top: 0, bottom: 0, left: 10, right: 10 };
+  private margin = { top: 0, bottom: 25, left: 10, right: 10 };
 
   private onCursorDragCallback?: (time: number) => void;
   private isDragging = false;
@@ -146,8 +146,9 @@ class Drawer {
       .domain(bands)
       .range([0, this.graphWidth]);
 
-    graphGroup
+    graphGroup // time
       .append('g')
+      .attr('transform', `translate(0, ${height - margin.bottom})`)
       // eslint-disable-next-line @typescript-eslint/no-shadow
       .call(g => g.select('.domain').remove())
       .attr('stroke-width', 0)
