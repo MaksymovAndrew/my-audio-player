@@ -1,0 +1,29 @@
+.trackInfo {
+  width: fit-content;
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: rgba(255, 20, 147, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 20, 147, 0.2);
+  box-shadow: 0 4px 12px rgba(255, 20, 147, 0.15);
+}
+
+.info {
+  color: #ff1493;
+  font-size: 16px;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.fileName {
+  font-weight: 500;
+}
+
+.duration {
+  font-weight: 600;
+}

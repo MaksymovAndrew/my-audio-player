@@ -1,54 +1,54 @@
 import React, { useCallback, useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAudio } from '../../context/AudioContext';
-import SoundDriver from './SoundDriver';
+import SoundDriver from './SoundDriver/SoundDriver';
 import LoadingMessage from '../Loading/LoadingMessage';
 import PlayerControls from '../PlayerControls/PlayerControls';
 import VolumeControl from '../VolumeControl/VolumeControl';
 import ResetButton from '../ResetButton/ResetButton';
 import WaveformContainer from '../WaveformContainer/WaveformContainer';
+import TrackInfo from '../TrackInfo/TrackInfo';
 import styles from './Player.module.scss';
 
 function Player() {
     const soundController = useRef<undefined | SoundDriver>(undefined);
     const [loading, setLoading] = useState(false);
     const [hasAudio, setHasAudio] = useState(false);
+    const [duration, setDuration] = useState(0);
     const { audioFile, setAudioFile } = useAudio();
     const navigate = useNavigate();
     const isInitializing = useRef(false);
 
-    const loadAudioFile = useCallback(
-        async (file: File) => {
-            if (isInitializing.current) {
-                return;
-            }
+    const loadAudioFile = useCallback(async (file: File) => {
+        if (isInitializing.current) {
+            return;
+        }
 
-            isInitializing.current = true;
-            setLoading(true);
+        isInitializing.current = true;
+        setLoading(true);
 
-            soundController.current?.destroy(); //kill previous audio (just in case)
+        soundController.current?.destroy(); //kill previous audio (just in case)
 
-            const waveContainer = document.getElementById('waveContainer');
-            if (!waveContainer) {
-                throw new Error('Wave container not found');
-            }
+        const waveContainer = document.getElementById('waveContainer');
+        if (!waveContainer) {
+            throw new Error('Wave container not found');
+        }
 
-            const soundInstance = new SoundDriver(file);
-            try {
-                await soundInstance.init(waveContainer);
-                soundController.current = soundInstance;
+        const soundInstance = new SoundDriver(file);
+        try {
+            await soundInstance.init(waveContainer);
+            soundController.current = soundInstance;
 
-                soundInstance.drawChart();
-                setHasAudio(true);
-            } catch (err) {
-                console.error('Failed to load audio:', err);
-            } finally {
-                setLoading(false);
-                isInitializing.current = false;
-            }
-        },
-        []
-    );
+            soundInstance.drawChart();
+            setDuration(soundInstance.getDuration());
+            setHasAudio(true);
+        } catch (err) {
+            console.error('Failed to load audio:', err);
+        } finally {
+            setLoading(false);
+            isInitializing.current = false;
+        }
+    }, []);
 
     useEffect(() => {
         if (audioFile && !hasAudio && !isInitializing.current) {
@@ -92,12 +92,20 @@ function Player() {
         <div className={styles.player}>
             {loading && <LoadingMessage />}
 
+            {!loading && hasAudio && (
+                <div className={styles.header}>
+                    <ResetButton onReset={handleReset} />
+                    <TrackInfo
+                        duration={duration}
+                        fileName={audioFile?.name}
+                    />
+                </div>
+            )}
+
             <WaveformContainer />
 
             {!loading && hasAudio && (
                 <div className={styles.soundEditor}>
-                    <ResetButton onReset={handleReset} />
-
                     <PlayerControls
                         onPlay={togglePlayer('play')}
                         onPause={togglePlayer('pause')}
