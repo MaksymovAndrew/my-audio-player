@@ -3,10 +3,9 @@ import styles from './FileUpload.module.scss';
 
 interface FileUploadProps {
     onFileSelect: (file: File) => void;
-    isDisabled: boolean;
 }
 
-function FileUpload({ onFileSelect, isDisabled }: FileUploadProps) {
+function FileUpload({ onFileSelect }: FileUploadProps) {
     const inputRef = useRef<HTMLInputElement>(null);
 
     const handleChange = useCallback(
@@ -27,10 +26,6 @@ function FileUpload({ onFileSelect, isDisabled }: FileUploadProps) {
     const handleButtonClick = useCallback(() => {
         inputRef.current?.click();
     }, []);
-
-    if (isDisabled) {
-        return null;
-    }
 
     return (
         <>

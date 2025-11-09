@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAudio } from '../../context/AudioContext';
 import Player from '../../components/Player/Player';
+import ErrorMessage from '../../components/ErrorMessage/ErrorMessage';
 import styles from './PlayerPage.module.scss';
 
 function PlayerPage() {
@@ -12,10 +13,14 @@ function PlayerPage() {
         if (!audioFile) {
             navigate('/');
         }
-    }, [audioFile, navigate]);
+    }, [audioFile]);
 
     if (!audioFile) {
-        return null;
+        return (
+            <div className={styles.container}>
+                <ErrorMessage />
+            </div>
+        );
     }
 
     return (

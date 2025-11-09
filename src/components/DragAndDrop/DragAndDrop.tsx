@@ -3,49 +3,33 @@ import styles from './DragAndDrop.module.scss';
 
 interface DragAndDropProps {
     onFileSelect: (file: File) => void;
-    isDisabled: boolean;
 }
 
-function DragAndDrop({ onFileSelect, isDisabled }: DragAndDropProps) {
+function DragAndDrop({ onFileSelect }: DragAndDropProps) {
     const [isDragging, setIsDragging] = useState(false);
 
     const handleDragOver = useCallback(
         (event: React.DragEvent<HTMLDivElement>) => {
             event.preventDefault();
             event.stopPropagation();
-
-            if (isDisabled) {
-                return;
-            }
-
             setIsDragging(true);
         },
-        [isDisabled]
+        []
     );
 
     const handleDragLeave = useCallback(
         (event: React.DragEvent<HTMLDivElement>) => {
             event.preventDefault();
             event.stopPropagation();
-
-            if (isDisabled) {
-                return;
-            }
-
             setIsDragging(false);
         },
-        [isDisabled]
+        []
     );
 
     const handleDrop = useCallback(
         (event: React.DragEvent<HTMLDivElement>) => {
             event.preventDefault();
             event.stopPropagation();
-
-            if (isDisabled) {
-                return;
-            }
-
             setIsDragging(false);
 
             const { files } = event.dataTransfer;
@@ -58,19 +42,17 @@ function DragAndDrop({ onFileSelect, isDisabled }: DragAndDropProps) {
                 }
             }
         },
-        [isDisabled, onFileSelect]
+        [onFileSelect]
     );
 
     return (
         <div
-            className={`${styles.dragAndDrop} ${isDragging ? styles.dragging : ''} ${
-                isDisabled ? styles.disabled : ''
-            }`}
+            className={`${styles.dragAndDrop} ${isDragging ? styles.dragging : ''}`}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
         >
-            {!isDisabled && <div className={styles.placeholder}>Drag and drop audio Files</div>}
+            <div className={styles.placeholder}>Drag and drop audio Files</div>
         </div>
     );
 }

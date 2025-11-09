@@ -15,14 +15,8 @@ function HomePage() {
 
     return (
         <div className={styles.container}>
-            <FileUpload
-                onFileSelect={handleFileSelect}
-                isDisabled={false}
-            />
-            <DragAndDrop
-                onFileSelect={handleFileSelect}
-                isDisabled={false}
-            />
+            <FileUpload onFileSelect={handleFileSelect} />
+            <DragAndDrop onFileSelect={handleFileSelect} />
         </div>
     );
 }

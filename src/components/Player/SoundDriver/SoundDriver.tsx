@@ -52,14 +52,6 @@ class SoundDriver {
         });
     }
 
-    private loadSound(readerEvent: ProgressEvent<FileReader>) {
-        if (!readerEvent?.target?.result) {
-            throw new Error('Can not read file');
-        }
-
-        return this.context.decodeAudioData(readerEvent.target.result as ArrayBuffer);
-    }
-
     public async play() {
         if (!this.audioBuffer) {
             throw new Error(
@@ -83,8 +75,7 @@ class SoundDriver {
         this.bufferSource.onended = () => {
             if (this.isRunning && this.audioBuffer) {
                 const currentTime = this.getCurrentTime();
-                if (currentTime >= this.audioBuffer.duration - 0.1) {
-                    //in case of incorrect rounding
+                if (currentTime >= this.audioBuffer.duration - 0.1) { //in case of incorrect rounding
                     this.pause(true);
                 }
             }
@@ -119,20 +110,6 @@ class SoundDriver {
         }
     }
 
-    private async stopAudio() {
-        if (!this.bufferSource || !this.gainNode) {
-            return;
-        }
-
-        this.drawer?.stopAnimation();
-
-        await this.context.suspend();
-        this.bufferSource.stop();
-        this.bufferSource.disconnect();
-        this.gainNode.disconnect();
-        this.isRunning = false;
-    }
-
     public changeVolume(volume: number) {
         this.currentVolume = volume;
 
@@ -163,7 +140,7 @@ class SoundDriver {
             throw new Error('onCursorDrag error. Audio buffer is not exists.');
         }
 
-        const clampedTime = Math.max(0, Math.min(time, this.audioBuffer.duration)); // song dimention
+        const clampedTime = Math.max(0, Math.min(time, this.audioBuffer.duration)); // song dimension
 
         const wasRunning = this.isRunning;
 
@@ -187,6 +164,28 @@ class SoundDriver {
         this.audioBuffer = undefined;
         this.bufferSource = undefined;
         this.gainNode = undefined;
+    }
+
+    private loadSound(readerEvent: ProgressEvent<FileReader>) {
+        if (!readerEvent?.target?.result) {
+            throw new Error('Can not read file');
+        }
+
+        return this.context.decodeAudioData(readerEvent.target.result as ArrayBuffer);
+    }
+
+    private async stopAudio() {
+        if (!this.bufferSource || !this.gainNode) {
+            return;
+        }
+
+        this.drawer?.stopAnimation();
+
+        await this.context.suspend();
+        this.bufferSource.stop();
+        this.bufferSource.disconnect();
+        this.gainNode.disconnect();
+        this.isRunning = false;
     }
 }
 

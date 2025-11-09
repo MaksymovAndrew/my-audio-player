@@ -10,6 +10,7 @@ class Drawer {
     private graphGroup?: d3.Selection<SVGGElement, undefined, null, undefined>;
     private cursorGroup?: d3.Selection<SVGGElement, undefined, null, undefined>;
     private cursorText?: d3.Selection<SVGTextElement, undefined, null, undefined>;
+    private animationTimer?: d3.Timer;
 
     private graphWidth = 0;
     private graphHeight = 0;
@@ -19,16 +20,14 @@ class Drawer {
     private isDragging = false;
     private onCursorDragCallback?: (time: number) => void;
 
-    private animationTimer?: d3.Timer;
-
-    private get duration(): number {
-        return this.buffer.duration;
-    }
-
     constructor(buffer: AudioBuffer, parent: HTMLElement, onCursorDrag?: (time: number) => void) {
         this.buffer = buffer;
         this.parent = parent;
         this.onCursorDragCallback = onCursorDrag;
+    }
+
+    private get duration(): number {
+        return this.buffer.duration;
     }
 
     public init() {
@@ -39,7 +38,49 @@ class Drawer {
         this.createCursor();
     }
 
-    public generateWaveform(audioData: number[], options: IOptions = {}) {
+    public updateCursor(currentTime: number) {
+        if (!this.cursorGroup || this.isDragging) return;
+
+        const position = (currentTime / this.duration) * this.graphWidth;
+        this.cursorPosition = position;
+        this.cursorGroup.attr('transform', `translate(${position}, 0)`);
+        this.cursorText?.text(formatTime(currentTime));
+    }
+
+    public startAnimation(getCurrentTime: () => number) {
+        this.stopAnimation(); // no duplicate timers if called multiple times (just in case)
+
+        this.animationTimer = d3.timer(() => {
+            this.updateCursor(getCurrentTime());
+        });
+    }
+
+    public stopAnimation() {
+        if (this.animationTimer) {
+            this.animationTimer.stop();
+            this.animationTimer = undefined;
+        }
+    }
+
+    public resetCursor() {
+        if (!this.cursorGroup) return;
+
+        this.cursorPosition = 0;
+        this.cursorGroup.attr('transform', `translate(${this.cursorPosition}, 0)`);
+        this.cursorText?.text(formatTime(0));
+    }
+
+    public destroy() {
+        this.stopAnimation();
+        this.cursorGroup?.on('.drag', null);
+        this.svg?.remove();
+
+        this.svg = undefined;
+        this.graphGroup = undefined;
+        this.cursorGroup = undefined;
+    }
+
+    private generateWaveform(audioData: number[], options: IOptions = {}) {
         const {
             margin = this.margin,
             height = this.parent.clientHeight,
@@ -119,7 +160,8 @@ class Drawer {
             .attr('rx', band / 2)
             .attr('ry', band / 2);
 
-        const timeScale = d3.scaleLinear().domain([0, this.duration]).range([0, this.graphWidth]); // scale seconds -> pixels
+        // scale seconds -> pixels
+        const timeScale = d3.scaleLinear().domain([0, this.duration]).range([0, this.graphWidth]);
 
         const step = 15; // 15 seconds
         const tickValues = [0]; // always show start time
@@ -136,7 +178,6 @@ class Drawer {
         graphGroup // time scale
             .append('g')
             .attr('transform', `translate(0, ${height - margin.bottom})`)
-            // eslint-disable-next-line @typescript-eslint/no-shadow
             .call((g) => g.select('.domain').remove())
             .attr('stroke-width', 0)
             .style('color', '#930860ff')
@@ -154,7 +195,7 @@ class Drawer {
         return svg;
     }
 
-    public clearData() {
+    private clearData() {
         const rawData = this.buffer.getChannelData(0); // We only need to work with one channel of data
         const samples = this.buffer.sampleRate; // Number of samples we want to have in our final data set
         const blockSize = Math.floor(rawData.length / samples); // the number of samples in each subdivision
@@ -169,48 +210,6 @@ class Drawer {
         }
         const multiplier = Math.max(...filteredData) ** -1;
         return filteredData.map((n) => n * multiplier);
-    }
-
-    public updateCursor(currentTime: number) {
-        if (!this.cursorGroup || this.isDragging) return;
-
-        const position = (currentTime / this.duration) * this.graphWidth;
-        this.cursorPosition = position;
-        this.cursorGroup.attr('transform', `translate(${position}, 0)`);
-        this.cursorText?.text(formatTime(currentTime));
-    }
-
-    public startAnimation(getCurrentTime: () => number) {
-        this.stopAnimation(); // no duplicate timers if called multiple times (just in case)
-
-        this.animationTimer = d3.timer(() => {
-            this.updateCursor(getCurrentTime());
-        });
-    }
-
-    public stopAnimation() {
-        if (this.animationTimer) {
-            this.animationTimer.stop();
-            this.animationTimer = undefined;
-        }
-    }
-
-    public resetCursor() {
-        if (!this.cursorGroup) return;
-
-        this.cursorPosition = 0;
-        this.cursorGroup.attr('transform', `translate(${this.cursorPosition}, 0)`);
-        this.cursorText?.text(formatTime(0));
-    }
-
-    public destroy() {
-        this.stopAnimation();
-        this.cursorGroup?.on('.drag', null);
-        this.svg?.remove();
-
-        this.svg = undefined;
-        this.graphGroup = undefined;
-        this.cursorGroup = undefined;
     }
 
     private createCursor() {

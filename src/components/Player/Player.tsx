@@ -2,7 +2,7 @@ import React, { useCallback, useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAudio } from '../../context/AudioContext';
 import SoundDriver from './SoundDriver/SoundDriver';
-import LoadingMessage from '../Loading/LoadingMessage';
+import LoadingMessage from '../LoadingMessage/LoadingMessage';
 import PlayerControls from '../PlayerControls/PlayerControls';
 import VolumeControl from '../VolumeControl/VolumeControl';
 import ResetButton from '../ResetButton/ResetButton';
@@ -12,12 +12,10 @@ import styles from './Player.module.scss';
 
 function Player() {
     const soundController = useRef<undefined | SoundDriver>(undefined);
+    const isInitializing = useRef(false);
     const [loading, setLoading] = useState(false);
-    const [hasAudio, setHasAudio] = useState(false);
-    const [duration, setDuration] = useState(0);
     const { audioFile, setAudioFile } = useAudio();
     const navigate = useNavigate();
-    const isInitializing = useRef(false);
 
     const loadAudioFile = useCallback(async (file: File) => {
         if (isInitializing.current) {
@@ -40,8 +38,6 @@ function Player() {
             soundController.current = soundInstance;
 
             soundInstance.drawChart();
-            setDuration(soundInstance.getDuration());
-            setHasAudio(true);
         } catch (err) {
             console.error('Failed to load audio:', err);
         } finally {
@@ -51,10 +47,10 @@ function Player() {
     }, []);
 
     useEffect(() => {
-        if (audioFile && !hasAudio && !isInitializing.current) {
+        if (audioFile && !soundController.current && !isInitializing.current) {
             loadAudioFile(audioFile);
         }
-    }, [audioFile, hasAudio, loadAudioFile]);
+    }, [audioFile, loadAudioFile]);
 
     const togglePlayer = useCallback(
         (type: string) => async () => {
@@ -76,7 +72,6 @@ function Player() {
     const handleReset = useCallback(() => {
         soundController.current?.destroy();
         soundController.current = undefined;
-        setHasAudio(false);
         setAudioFile(null);
         isInitializing.current = false;
         navigate('/');
@@ -92,11 +87,11 @@ function Player() {
         <div className={styles.player}>
             {loading && <LoadingMessage />}
 
-            {!loading && hasAudio && (
+            {!loading && soundController.current && (
                 <div className={styles.header}>
                     <ResetButton onReset={handleReset} />
                     <TrackInfo
-                        duration={duration}
+                        duration={soundController.current.getDuration()}
                         fileName={audioFile?.name}
                     />
                 </div>
@@ -104,7 +99,7 @@ function Player() {
 
             <WaveformContainer />
 
-            {!loading && hasAudio && (
+            {!loading && soundController.current && (
                 <div className={styles.soundEditor}>
                     <PlayerControls
                         onPlay={togglePlayer('play')}
