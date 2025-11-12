@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import { useCallback, useRef, type ChangeEvent } from 'react';
 import styles from './FileUpload.module.scss';
 
 interface FileUploadProps {
@@ -9,7 +9,7 @@ function FileUpload({ onFileSelect }: FileUploadProps) {
     const inputRef = useRef<HTMLInputElement>(null);
 
     const handleChange = useCallback(
-        (event: React.ChangeEvent<HTMLInputElement>) => {
+        (event: ChangeEvent<HTMLInputElement>) => {
             const { files } = event.target;
             if (files && files.length > 0) {
                 const file = files[0];

@@ -1,7 +1,7 @@
 {
   "name": "my-audio-player",
   "private": true,
-  "version": "1.1.2",
+  "version": "1.2.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -13,7 +13,6 @@
     "d3": "^7.9.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-router-dom": "^7.9.5",
     "sass": "^1.93.3"
   },
   "devDependencies": {

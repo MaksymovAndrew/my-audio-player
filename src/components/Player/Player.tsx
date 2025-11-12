@@ -1,5 +1,4 @@
-import React, { useCallback, useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useCallback, useState, useRef, useEffect, type ChangeEvent } from 'react';
 import { useAudio } from '../../context/AudioContext';
 import SoundDriver from './SoundDriver/SoundDriver';
 import LoadingMessage from '../LoadingMessage/LoadingMessage';
@@ -15,7 +14,6 @@ function Player() {
     const isInitializing = useRef(false);
     const [loading, setLoading] = useState(false);
     const { audioFile, setAudioFile } = useAudio();
-    const navigate = useNavigate();
 
     const loadAudioFile = useCallback(async (file: File) => {
         if (isInitializing.current) {
@@ -65,7 +63,7 @@ function Player() {
         []
     );
 
-    const onVolumeChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const onVolumeChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
         soundController.current?.changeVolume(Number(event.target.value));
     }, []);
 
@@ -74,8 +72,7 @@ function Player() {
         soundController.current = undefined;
         setAudioFile(null);
         isInitializing.current = false;
-        navigate('/');
-    }, [navigate, setAudioFile]);
+    }, [setAudioFile]);
 
     useEffect(() => {
         return () => {

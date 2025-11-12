@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState, type DragEvent } from 'react';
 import styles from './DragAndDrop.module.scss';
 
 interface DragAndDropProps {
@@ -9,7 +9,7 @@ function DragAndDrop({ onFileSelect }: DragAndDropProps) {
     const [isDragging, setIsDragging] = useState(false);
 
     const handleDragOver = useCallback(
-        (event: React.DragEvent<HTMLDivElement>) => {
+        (event: DragEvent<HTMLDivElement>) => {
             event.preventDefault();
             event.stopPropagation();
             setIsDragging(true);
@@ -18,7 +18,7 @@ function DragAndDrop({ onFileSelect }: DragAndDropProps) {
     );
 
     const handleDragLeave = useCallback(
-        (event: React.DragEvent<HTMLDivElement>) => {
+        (event: DragEvent<HTMLDivElement>) => {
             event.preventDefault();
             event.stopPropagation();
             setIsDragging(false);
@@ -27,7 +27,7 @@ function DragAndDrop({ onFileSelect }: DragAndDropProps) {
     );
 
     const handleDrop = useCallback(
-        (event: React.DragEvent<HTMLDivElement>) => {
+        (event: DragEvent<HTMLDivElement>) => {
             event.preventDefault();
             event.stopPropagation();
             setIsDragging(false);

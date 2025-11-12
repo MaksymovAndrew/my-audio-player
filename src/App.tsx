@@ -1,15 +1,14 @@
-import { Routes, Route } from 'react-router-dom';
+import { useAudio } from './context/AudioContext';
 import HomePage from './pages/HomePage/HomePage';
 import PlayerPage from './pages/PlayerPage/PlayerPage';
 import './App.css';
 
 function App() {
+    const { audioFile } = useAudio();
+
     return (
         <div className="App">
-            <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/player" element={<PlayerPage />} />
-            </Routes>
+            {audioFile ? <PlayerPage /> : <HomePage />}
         </div>
     );
 }
