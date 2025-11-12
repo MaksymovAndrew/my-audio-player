@@ -1,10 +1,6 @@
-import styles from './TrackInfo.module.scss';
+import type { TrackInfoProps } from '../../types/component.types';
 import { formatTime } from '../../utils/formatTime';
-
-interface TrackInfoProps {
-    duration: number;
-    fileName?: string;
-}
+import styles from './TrackInfo.module.scss';
 
 function TrackInfo({ duration, fileName }: TrackInfoProps) {
     return (

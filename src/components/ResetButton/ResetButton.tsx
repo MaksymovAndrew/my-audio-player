@@ -1,8 +1,5 @@
+import type { ResetButtonProps } from '../../types/component.types';
 import styles from './ResetButton.module.scss';
-
-interface ResetButtonProps {
-    onReset: () => void;
-}
 
 function ResetButton({ onReset }: ResetButtonProps) {
     return (

@@ -1,9 +1,6 @@
 import { useCallback, useRef, type ChangeEvent } from 'react';
+import type { FileUploadProps } from '../../types/component.types';
 import styles from './FileUpload.module.scss';
-
-interface FileUploadProps {
-    onFileSelect: (file: File) => void;
-}
 
 function FileUpload({ onFileSelect }: FileUploadProps) {
     const inputRef = useRef<HTMLInputElement>(null);

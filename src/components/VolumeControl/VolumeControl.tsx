@@ -1,9 +1,6 @@
 import { useState, type ChangeEvent } from 'react';
+import type { VolumeControlProps } from '../../types/component.types';
 import styles from './VolumeControl.module.scss';
-
-interface VolumeControlProps {
-    onChange: (event: ChangeEvent<HTMLInputElement>) => void;
-}
 
 function VolumeControl({ onChange }: VolumeControlProps) {
     const [volume, setVolume] = useState(1);

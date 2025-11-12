@@ -1,9 +1,5 @@
 import { createContext, useContext, useState, type ReactNode } from 'react';
-
-interface AudioContextType {
-    audioFile: File | null;
-    setAudioFile: (file: File | null) => void;
-}
+import type { AudioContextType } from '../types/context.types';
 
 const AudioContext = createContext<AudioContextType | undefined>(undefined);
 

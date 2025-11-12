@@ -1,10 +1,5 @@
+import type { PlayerControlsProps } from '../../types/component.types';
 import styles from './PlayerControls.module.scss';
-
-interface PlayerControlsProps {
-    onPlay: () => void;
-    onPause: () => void;
-    onStop: () => void;
-}
 
 function PlayerControls({ onPlay, onPause, onStop }: PlayerControlsProps) {
     return (

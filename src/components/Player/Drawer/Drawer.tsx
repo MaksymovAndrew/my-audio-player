@@ -1,16 +1,22 @@
 import * as d3 from 'd3';
-import type { IOptions } from './interface';
+import type {
+    DrawerOptions,
+    D3SvgSelection,
+    D3GroupSelection,
+    D3TextSelection,
+    D3Timer,
+} from '../../../types/drawer.types';
 import { formatTime } from '../../../utils/formatTime';
 
 class Drawer {
     private buffer: AudioBuffer;
     private parent: HTMLElement;
 
-    private svg?: d3.Selection<SVGSVGElement, undefined, null, undefined>;
-    private graphGroup?: d3.Selection<SVGGElement, undefined, null, undefined>;
-    private cursorGroup?: d3.Selection<SVGGElement, undefined, null, undefined>;
-    private cursorText?: d3.Selection<SVGTextElement, undefined, null, undefined>;
-    private animationTimer?: d3.Timer;
+    private svg?: D3SvgSelection;
+    private graphGroup?: D3GroupSelection;
+    private cursorGroup?: D3GroupSelection;
+    private cursorText?: D3TextSelection;
+    private animationTimer?: D3Timer;
 
     private graphWidth = 0;
     private graphHeight = 0;
@@ -80,7 +86,7 @@ class Drawer {
         this.cursorGroup = undefined;
     }
 
-    private generateWaveform(audioData: number[], options: IOptions = {}) {
+    private generateWaveform(audioData: number[], options: DrawerOptions = {}) {
         const {
             margin = this.margin,
             height = this.parent.clientHeight,

@@ -1,4 +1,5 @@
 import { useCallback, useState, useRef, useEffect, type ChangeEvent } from 'react';
+import type { PlayerAction } from '../../types/audio.types';
 import { useAudio } from '../../context/AudioContext';
 import SoundDriver from './SoundDriver/SoundDriver';
 import LoadingMessage from '../LoadingMessage/LoadingMessage';
@@ -51,7 +52,7 @@ function Player() {
     }, [audioFile, loadAudioFile]);
 
     const togglePlayer = useCallback(
-        (type: string) => async () => {
+        (type: PlayerAction) => async () => {
             if (type === 'play') {
                 await soundController.current?.play();
             } else if (type === 'stop') {

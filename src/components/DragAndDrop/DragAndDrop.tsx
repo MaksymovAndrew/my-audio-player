@@ -1,9 +1,6 @@
 import { useCallback, useState, type DragEvent } from 'react';
+import type { DragAndDropProps } from '../../types/component.types';
 import styles from './DragAndDrop.module.scss';
-
-interface DragAndDropProps {
-    onFileSelect: (file: File) => void;
-}
 
 function DragAndDrop({ onFileSelect }: DragAndDropProps) {
     const [isDragging, setIsDragging] = useState(false);
