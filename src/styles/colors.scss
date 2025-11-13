@@ -1,0 +1,25 @@
+// primary pink colors
+$color-primary: #ff1493;
+$color-primary-light: #ff69b4;
+$color-primary-lighter: #ff8cc8;
+$color-primary-lightest: #ffb6e0;
+$color-primary-dark: #e91485;
+
+// basic colors
+$color-white: #fff;
+$color-gray: #666;
+$color-gray-light: #999;
+
+// alpha colors (transparent) - primary
+$color-primary-alpha-05: rgba(255, 20, 147, 0.05);
+$color-primary-alpha-10: rgba(255, 20, 147, 0.1);
+$color-primary-alpha-15: rgba(255, 20, 147, 0.15);
+$color-primary-alpha-20: rgba(255, 20, 147, 0.2);
+$color-primary-alpha-25: rgba(255, 20, 147, 0.25);
+$color-primary-alpha-30: rgba(255, 20, 147, 0.3);
+$color-primary-alpha-35: rgba(255, 20, 147, 0.35);
+$color-primary-alpha-40: rgba(255, 20, 147, 0.4);
+
+// alpha colors (transparent) - primary light
+$color-primary-light-alpha-30: rgba(255, 105, 180, 0.3);
+$color-primary-light-alpha-40: rgba(255, 105, 180, 0.4);

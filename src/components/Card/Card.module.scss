@@ -1,0 +1,8 @@
+@use '../../styles/colors' as colors;
+@use '../../styles/layout' as layout;
+
+.card {
+  background: colors.$color-primary-alpha-05;
+  border-radius: layout.$radius-xl;
+  border: layout.$border-width-thin solid colors.$color-primary-alpha-20;
+}

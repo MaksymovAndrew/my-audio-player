@@ -1,0 +1,21 @@
+@use '../../styles/layout' as layout;
+
+.button {
+  border: none;
+  cursor: pointer;
+  transition: all layout.$transition-normal;
+
+  &:hover {
+    transform: layout.$transform-hover-up;
+  }
+
+  &:active {
+    transform: layout.$transform-active-reset;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none;
+  }
+}

@@ -1,0 +1,45 @@
+// spacing
+$spacing-lg: 15px;
+$spacing-xl: 20px;
+$spacing-3xl: 30px;
+
+// border radius
+$radius-sm: 5px;
+$radius-md: 6px;
+$radius-lg: 8px;
+$radius-xl: 12px;
+$radius-round: 50%;
+
+// font sizes
+$font-sm: 15px;
+$font-md: 16px;
+$font-lg: 18px;
+
+// font-weight
+$font-medium: 500;
+$font-semibold: 600;
+
+// transitions
+$transition-fast: 0.2s ease;
+$transition-normal: 0.3s ease;
+
+// button padding
+$button-padding-md: 12px 30px;
+$button-padding-lg: 15px 40px;
+
+// border width
+$border-width-thin: 1px;
+$border-width-medium: 2px;
+
+// transforms
+$transform-hover-up: translateY(-2px);
+$transform-active-reset: translateY(0);
+
+// z-index
+$z-index-overlay: 1;
+
+// shadows (without color, use with alpha colors)
+$shadow-sm: 0 2px 8px;
+$shadow-md: 0 4px 12px;
+$shadow-lg: 0 6px 18px;
+$shadow-xl: 0 6px 20px;

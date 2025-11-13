@@ -1,24 +1,22 @@
+@use '../../styles/colors' as colors;
+@use '../../styles/layout' as layout;
+
 .resetButton {
-  padding: 12px 30px;
-  font-size: 15px;
-  font-weight: 500;
-  color: #fff;
-  background: linear-gradient(135deg, #ff69b4 0%, #ff8cc8 100%);
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 3px 12px rgba(255, 105, 180, 0.3);
+  padding: layout.$button-padding-md;
+  font-size: layout.$font-sm;
+  font-weight: layout.$font-medium;
+  color: colors.$color-white;
+  background: linear-gradient(135deg, colors.$color-primary-light 0%, colors.$color-primary-lighter 100%);
+  border-radius: layout.$radius-lg;
+  box-shadow: layout.$shadow-md colors.$color-primary-light-alpha-30;
   width: fit-content;
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 18px rgba(255, 105, 180, 0.4);
-    background: linear-gradient(135deg, #ff69b4 0%, #ffb6e0 100%);
+    box-shadow: layout.$shadow-lg colors.$color-primary-light-alpha-40;
+    background: linear-gradient(135deg, colors.$color-primary-light 0%, colors.$color-primary-lightest 100%);
   }
 
   &:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 8px rgba(255, 105, 180, 0.3);
+    box-shadow: layout.$shadow-sm colors.$color-primary-light-alpha-30;
   }
 }

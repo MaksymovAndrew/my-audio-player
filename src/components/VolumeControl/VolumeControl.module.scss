@@ -1,18 +1,18 @@
+@use '../../styles/colors' as colors;
+@use '../../styles/layout' as layout;
+
 .volumeContainer {
   display: flex;
   align-items: center;
-  gap: 15px;
-  padding: 15px 25px;
-  background: rgba(255, 20, 147, 0.05);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 20, 147, 0.2);
+  gap: layout.$spacing-lg;
+  padding: layout.$spacing-lg 25px;
   width: 80%;
 }
 
 .label {
-  font-size: 16px;
-  font-weight: 500;
-  color: #ff1493;
+  font-size: layout.$font-md;
+  font-weight: layout.$font-medium;
+  color: colors.$color-primary;
   white-space: nowrap;
   min-width: 55px;
 }
@@ -20,7 +20,7 @@
 .slider {
   width: 250px;
   height: 6px;
-  border-radius: 5px;
+  border-radius: layout.$radius-sm;
   outline: none;
   cursor: pointer;
   appearance: none;
@@ -33,59 +33,59 @@
     -webkit-appearance: none;
     width: 18px;
     height: 18px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #ff1493 0%, #ff69b4 100%);
+    border-radius: layout.$radius-round;
+    background: linear-gradient(135deg, colors.$color-primary 0%, colors.$color-primary-light 100%);
     cursor: pointer;
-    box-shadow: 0 2px 8px rgba(255, 20, 147, 0.3);
-    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px colors.$color-primary-alpha-30;
+    transition: all layout.$transition-fast;
     margin-top: -6px;
 
     &:active {
       transform: scale(1.15);
-      box-shadow: 0 3px 12px rgba(255, 20, 147, 0.4);
+      box-shadow: 0 3px 12px colors.$color-primary-alpha-40;
     }
   }
 
   &::-moz-range-thumb {
     width: 18px;
     height: 18px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #ff1493 0%, #ff69b4 100%);
+    border-radius: layout.$radius-round;
+    background: linear-gradient(135deg, colors.$color-primary 0%, colors.$color-primary-light 100%);
     cursor: pointer;
     border: none;
-    box-shadow: 0 2px 8px rgba(255, 20, 147, 0.3);
-    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px colors.$color-primary-alpha-30;
+    transition: all layout.$transition-fast;
 
     &:active {
       transform: scale(1.15);
-      box-shadow: 0 3px 12px rgba(255, 20, 147, 0.4);
+      box-shadow: 0 3px 12px colors.$color-primary-alpha-40;
     }
   }
 
   &::-webkit-slider-runnable-track {
     width: 100%;
     height: 6px;
-    border-radius: 5px;
-    background: linear-gradient(to right, #ffb6e0 0%, #ff69b4 50%, #ff1493 100%);
+    border-radius: layout.$radius-sm;
+    background: linear-gradient(to right, colors.$color-primary-lightest 0%, colors.$color-primary-light 50%, colors.$color-primary 100%);
   }
 
   &::-moz-range-track {
     width: 100%;
     height: 6px;
-    border-radius: 5px;
-    background: linear-gradient(to right, #ffb6e0 0%, #ff69b4 50%, #ff1493 100%);
+    border-radius: layout.$radius-sm;
+    background: linear-gradient(to right, colors.$color-primary-lightest 0%, colors.$color-primary-light 50%, colors.$color-primary 100%);
     border: none;
   }
 }
 
 .value {
-  font-size: 16px;
-  font-weight: 600;
-  color: #ff1493;
+  font-size: layout.$font-md;
+  font-weight: layout.$font-semibold;
+  color: colors.$color-primary;
   width: 45px;
   text-align: center;
   padding: 4px 8px;
-  background: rgba(255, 20, 147, 0.1);
-  border-radius: 6px;
-  border: 1px solid rgba(255, 20, 147, 0.2);
+  background: colors.$color-primary-alpha-10;
+  border-radius: layout.$radius-md;
+  border: layout.$border-width-thin solid colors.$color-primary-alpha-20;
 }

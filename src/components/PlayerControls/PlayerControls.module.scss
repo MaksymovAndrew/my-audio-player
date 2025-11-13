@@ -1,58 +1,69 @@
+@use '../../styles/colors' as colors;
+@use '../../styles/layout' as layout;
+
 .controls {
   width: 75%;
   display: flex;
-  gap: 15px;
+  gap: layout.$spacing-lg;
   align-items: center;
   justify-content: center;
-  padding: 15px;
-  background: rgba(255, 20, 147, 0.05);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 20, 147, 0.2);
+  padding: layout.$spacing-lg;
 }
 
 .button {
-  padding: 12px 30px;
-  font-size: 15px;
-  font-weight: 500;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(255, 20, 147, 0.25);
+  padding: layout.$button-padding-md;
+  font-size: layout.$font-sm;
+  font-weight: layout.$font-medium;
+  color: colors.$color-white;
+  border-radius: layout.$radius-lg;
+  box-shadow: layout.$shadow-md colors.$color-primary-alpha-25;
   min-width: 90px;
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(255, 20, 147, 0.35);
+    box-shadow: layout.$shadow-lg colors.$color-primary-alpha-35;
   }
 
   &:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 8px rgba(255, 20, 147, 0.25);
+    box-shadow: layout.$shadow-sm colors.$color-primary-alpha-25;
   }
 }
 
 .playButton {
-  background: linear-gradient(135deg, #ff1493 0%, #ff69b4 100%);
+  background: linear-gradient(135deg, colors.$color-primary 0%, colors.$color-primary-light 100%);
 
   &:hover {
-    background: linear-gradient(135deg, #ff1493 0%, #ff8cc8 100%);
+    background: linear-gradient(
+      135deg,
+      colors.$color-primary 0%,
+      colors.$color-primary-lighter 100%
+    );
   }
 }
 
 .pauseButton {
-  background: linear-gradient(135deg, #ff69b4 0%, #ff8cc8 100%);
+  background: linear-gradient(
+    135deg,
+    colors.$color-primary-light 0%,
+    colors.$color-primary-lighter 100%
+  );
 
   &:hover {
-    background: linear-gradient(135deg, #ff69b4 0%, #ffb6e0 100%);
+    background: linear-gradient(
+      135deg,
+      colors.$color-primary-light 0%,
+      colors.$color-primary-lightest 100%
+    );
   }
 }
 
 .stopButton {
-  background: linear-gradient(135deg, #e91485 0%, #ff1493 100%);
+  background: linear-gradient(135deg, colors.$color-primary-dark 0%, colors.$color-primary 100%);
 
   &:hover {
-    background: linear-gradient(135deg, #e91485 0%, #ff69b4 100%);
+    background: linear-gradient(
+      135deg,
+      colors.$color-primary-dark 0%,
+      colors.$color-primary-light 100%
+    );
   }
 }

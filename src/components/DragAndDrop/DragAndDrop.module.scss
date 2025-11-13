@@ -1,10 +1,13 @@
+@use '../../styles/colors' as colors;
+@use '../../styles/layout' as layout;
+
 .dragAndDrop {
   width: 99%;
   height: 450px;
-  margin-top: 30px;
-  border: 2px dashed #666;
+  margin-top: layout.$spacing-3xl;
+  border: layout.$border-width-medium dashed colors.$color-gray;
   background-color: transparent;
-  transition: background-color 0.3s ease;
+  transition: background-color layout.$transition-normal;
   position: relative;
   display: flex;
   align-items: center;
@@ -12,8 +15,8 @@
 }
 
 .dragging {
-  border: 2px dashed #ff1493;
-  background-color: rgba(255, 20, 147, 0.1);
+  border: layout.$border-width-medium dashed colors.$color-primary;
+  background-color: colors.$color-primary-alpha-10;
 }
 
 .placeholder {
@@ -21,13 +24,13 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  color: #999;
-  font-size: 18px;
+  color: colors.$color-gray-light;
+  font-size: layout.$font-lg;
   text-align: center;
   pointer-events: none;
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
-  z-index: 1;
+  z-index: layout.$z-index-overlay;
 }

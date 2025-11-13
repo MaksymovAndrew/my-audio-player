@@ -1,6 +1,11 @@
 import { useCallback, useRef, type ChangeEvent } from 'react';
-import type { FileUploadProps } from '../../types/component.types';
+import { validateAudioFile } from '../../utils/validateAudioFile';
+import Button from '../Button/Button';
 import styles from './FileUpload.module.scss';
+
+interface FileUploadProps {
+    onFileSelect: (file: File) => void;
+}
 
 function FileUpload({ onFileSelect }: FileUploadProps) {
     const inputRef = useRef<HTMLInputElement>(null);
@@ -10,10 +15,8 @@ function FileUpload({ onFileSelect }: FileUploadProps) {
             const { files } = event.target;
             if (files && files.length > 0) {
                 const file = files[0];
-                if (file.type.includes('audio')) {
+                if (validateAudioFile(file)) {
                     onFileSelect(file);
-                } else {
-                    alert('Please select an audio file');
                 }
             }
         },
@@ -26,13 +29,12 @@ function FileUpload({ onFileSelect }: FileUploadProps) {
 
     return (
         <>
-            <button
-                type="button"
+            <Button
                 className={styles.uploadButton}
                 onClick={handleButtonClick}
             >
                 Choose Audio File
-            </button>
+            </Button>
             <input
                 ref={inputRef}
                 type="file"

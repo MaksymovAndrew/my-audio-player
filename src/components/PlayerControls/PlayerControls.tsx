@@ -1,33 +1,37 @@
-import type { PlayerControlsProps } from '../../types/component.types';
+import Button from '../Button/Button';
+import Card from '../Card/Card';
 import styles from './PlayerControls.module.scss';
+
+interface PlayerControlsProps {
+    onPlay: () => void;
+    onPause: () => void;
+    onStop: () => void;
+}
 
 function PlayerControls({ onPlay, onPause, onStop }: PlayerControlsProps) {
     return (
-        <div className={styles.controls}>
-            <button
-                type="button"
+        <Card className={styles.controls}>
+            <Button
                 className={`${styles.button} ${styles.playButton}`}
                 onClick={onPlay}
             >
                 Play
-            </button>
+            </Button>
 
-            <button
-                type="button"
+            <Button
                 className={`${styles.button} ${styles.pauseButton}`}
                 onClick={onPause}
             >
                 Pause
-            </button>
+            </Button>
 
-            <button
-                type="button"
+            <Button
                 className={`${styles.button} ${styles.stopButton}`}
                 onClick={onStop}
             >
                 Stop
-            </button>
-        </div>
+            </Button>
+        </Card>
     );
 }
 

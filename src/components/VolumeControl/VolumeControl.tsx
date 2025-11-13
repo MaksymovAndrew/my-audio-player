@@ -1,6 +1,10 @@
 import { useState, type ChangeEvent } from 'react';
-import type { VolumeControlProps } from '../../types/component.types';
+import Card from '../Card/Card';
 import styles from './VolumeControl.module.scss';
+
+interface VolumeControlProps {
+    onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+}
 
 function VolumeControl({ onChange }: VolumeControlProps) {
     const [volume, setVolume] = useState(1);
@@ -14,7 +18,7 @@ function VolumeControl({ onChange }: VolumeControlProps) {
     const volumePercent = Math.round(volume * 100);
 
     return (
-        <div className={styles.volumeContainer}>
+        <Card className={styles.volumeContainer}>
             <label className={styles.label}>Volume:</label>
             <input
                 type="range"
@@ -26,7 +30,7 @@ function VolumeControl({ onChange }: VolumeControlProps) {
                 step={0.01}
             />
             <span className={styles.value}>{volumePercent}</span>
-        </div>
+        </Card>
     );
 }
 
