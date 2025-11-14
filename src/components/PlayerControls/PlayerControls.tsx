@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import Button from '../Button/Button';
 import Card from '../Card/Card';
 import styles from './PlayerControls.module.scss';
@@ -8,7 +9,7 @@ interface PlayerControlsProps {
     onStop: () => void;
 }
 
-function PlayerControls({ onPlay, onPause, onStop }: PlayerControlsProps) {
+const PlayerControls = memo(({ onPlay, onPause, onStop }: PlayerControlsProps) => {
     return (
         <Card className={styles.controls}>
             <Button
@@ -33,6 +34,6 @@ function PlayerControls({ onPlay, onPause, onStop }: PlayerControlsProps) {
             </Button>
         </Card>
     );
-}
+});
 
 export default PlayerControls;

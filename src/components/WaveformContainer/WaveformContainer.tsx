@@ -1,7 +1,8 @@
+import { memo } from 'react';
 import styles from './WaveformContainer.module.scss';
 
-function WaveformContainer() {
+const WaveformContainer = memo(() => {
     return <div id="waveContainer" className={styles.waveformContainer}></div>;
-}
+});
 
 export default WaveformContainer;

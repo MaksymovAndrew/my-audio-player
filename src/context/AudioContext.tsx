@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, type ReactNode } from 'react';
+import { createContext, useContext, useState, useMemo, type ReactNode } from 'react';
 import type { AudioContextType } from '../types/context.types';
 
 const AudioContext = createContext<AudioContextType | undefined>(undefined);
@@ -6,8 +6,10 @@ const AudioContext = createContext<AudioContextType | undefined>(undefined);
 export function AudioProvider({ children }: { children: ReactNode }) {
     const [audioFile, setAudioFile] = useState<File | null>(null);
 
+    const value = useMemo(() => ({ audioFile, setAudioFile }), [audioFile]);
+
     return (
-        <AudioContext.Provider value={{ audioFile, setAudioFile }}>
+        <AudioContext.Provider value={value}>
             {children}
         </AudioContext.Provider>
     );

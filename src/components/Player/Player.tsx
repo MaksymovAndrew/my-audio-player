@@ -1,5 +1,4 @@
 import { useCallback, useState, useRef, useEffect, type ChangeEvent } from 'react';
-import type { PlayerAction } from '../../types/audio.types';
 import { useAudio } from '../../context/AudioContext';
 import SoundDriver from './SoundDriver/SoundDriver';
 import LoadingMessage from '../LoadingMessage/LoadingMessage';
@@ -51,18 +50,17 @@ function Player() {
         }
     }, [audioFile, loadAudioFile]);
 
-    const togglePlayer = useCallback(
-        (type: PlayerAction) => async () => {
-            if (type === 'play') {
-                await soundController.current?.play();
-            } else if (type === 'stop') {
-                await soundController.current?.pause(true);
-            } else {
-                await soundController.current?.pause();
-            }
-        },
-        []
-    );
+    const handlePlay = useCallback(async () => {
+        await soundController.current?.play();
+    }, []);
+
+    const handlePause = useCallback(async () => {
+        await soundController.current?.pause();
+    }, []);
+
+    const handleStop = useCallback(async () => {
+        await soundController.current?.pause(true);
+    }, []);
 
     const onVolumeChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
         soundController.current?.changeVolume(Number(event.target.value));
@@ -100,9 +98,9 @@ function Player() {
             {!loading && soundController.current && (
                 <div className={styles.soundEditor}>
                     <PlayerControls
-                        onPlay={togglePlayer('play')}
-                        onPause={togglePlayer('pause')}
-                        onStop={togglePlayer('stop')}
+                        onPlay={handlePlay}
+                        onPause={handlePause}
+                        onStop={handleStop}
                     />
 
                     <VolumeControl onChange={onVolumeChange} />
