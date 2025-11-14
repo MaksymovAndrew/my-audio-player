@@ -7,6 +7,7 @@ import type {
     D3Timer,
 } from '../../../types/drawer.types';
 import { formatTime } from '../../../utils/formatTime';
+import { throttle, type ThrottledFunction } from '../../../utils/throttle';
 
 class Drawer {
     private buffer: AudioBuffer;
@@ -17,6 +18,7 @@ class Drawer {
     private cursorGroup?: D3GroupSelection;
     private cursorText?: D3TextSelection;
     private animationTimer?: D3Timer;
+    private throttledCursorUpdate?: ThrottledFunction<[number]>;
 
     private graphWidth = 0;
     private graphHeight = 0;
@@ -78,12 +80,14 @@ class Drawer {
 
     public destroy() {
         this.stopAnimation();
+        this.throttledCursorUpdate?.cancel();
         this.cursorGroup?.on('.drag', null);
         this.svg?.remove();
 
         this.svg = undefined;
         this.graphGroup = undefined;
         this.cursorGroup = undefined;
+        this.throttledCursorUpdate = undefined;
     }
 
     private generateWaveform(audioData: number[], options: DrawerOptions = {}) {
@@ -288,6 +292,12 @@ class Drawer {
             this.isDragging = false;
         };
 
+        this.throttledCursorUpdate = throttle((position: number) => {
+            const time = this.getTimeFromPosition(position);
+            this.cursorText?.text(formatTime(time));
+            this.cursorGroup?.attr('transform', `translate(${position}, 0)`);
+        }, 8);
+
         const drag = d3
             .drag<SVGGElement, undefined>()
             .on('start', () => {
@@ -300,12 +310,7 @@ class Drawer {
                 newX = Math.max(0, Math.min(newX, this.graphWidth)); // graph dimension
 
                 this.cursorPosition = newX;
-
-                // update time during drag
-                const time = this.getTimeFromPosition(newX);
-                this.cursorText?.text(formatTime(time));
-
-                this.cursorGroup?.attr('transform', `translate(${newX}, 0)`);
+                this.throttledCursorUpdate?.(newX);
             })
             .on('end', endDrag);
 
