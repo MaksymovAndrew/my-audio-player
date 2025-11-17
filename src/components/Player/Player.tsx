@@ -82,7 +82,7 @@ function Player() {
         <div className={styles.player}>
             {loading && <LoadingMessage />}
 
-            <WaveformContainer />
+            <WaveformContainer loading={loading} />
 
             {!loading && soundController.current && (
                 <>

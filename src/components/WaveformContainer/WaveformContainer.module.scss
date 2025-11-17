@@ -6,4 +6,10 @@
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
+  transition: opacity 0.2s;
+  opacity: 1;
+
+  &.loading {
+    opacity: 0;
+  }
 }
