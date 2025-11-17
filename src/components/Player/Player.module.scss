@@ -15,13 +15,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  margin-top: layout.$spacing-xl;
-}
-
-.header > :first-child {
-  position: absolute;
-  left: layout.$spacing-xl;
 }
 
 .soundEditor {

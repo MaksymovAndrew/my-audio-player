@@ -4,7 +4,6 @@ import SoundDriver from './SoundDriver/SoundDriver';
 import LoadingMessage from '../LoadingMessage/LoadingMessage';
 import PlayerControls from '../PlayerControls/PlayerControls';
 import VolumeControl from '../VolumeControl/VolumeControl';
-import ResetButton from '../ResetButton/ResetButton';
 import WaveformContainer from '../WaveformContainer/WaveformContainer';
 import TrackInfo from '../TrackInfo/TrackInfo';
 import styles from './Player.module.scss';
@@ -83,28 +82,28 @@ function Player() {
         <div className={styles.player}>
             {loading && <LoadingMessage />}
 
-            {!loading && soundController.current && (
-                <div className={styles.header}>
-                    <ResetButton onReset={handleReset} />
-                    <TrackInfo
-                        duration={soundController.current.getDuration()}
-                        fileName={audioFile?.name}
-                    />
-                </div>
-            )}
-
             <WaveformContainer />
 
             {!loading && soundController.current && (
-                <div className={styles.soundEditor}>
-                    <PlayerControls
-                        onPlay={handlePlay}
-                        onPause={handlePause}
-                        onStop={handleStop}
-                    />
+                <>
+                    <div className={styles.header}>
+                        <TrackInfo
+                            duration={soundController.current.getDuration()}
+                            fileName={audioFile?.name}
+                        />
+                    </div>
 
-                    <VolumeControl onChange={onVolumeChange} />
-                </div>
+                    <div className={styles.soundEditor}>
+                        <PlayerControls
+                            onPlay={handlePlay}
+                            onPause={handlePause}
+                            onStop={handleStop}
+                            onReset={handleReset}
+                        />
+
+                        <VolumeControl onChange={onVolumeChange} />
+                    </div>
+                </>
             )}
         </div>
     );

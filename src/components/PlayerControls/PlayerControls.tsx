@@ -7,9 +7,10 @@ interface PlayerControlsProps {
     onPlay: () => void;
     onPause: () => void;
     onStop: () => void;
+    onReset: () => void;
 }
 
-const PlayerControls = memo(({ onPlay, onPause, onStop }: PlayerControlsProps) => {
+const PlayerControls = memo(({ onPlay, onPause, onStop, onReset }: PlayerControlsProps) => {
     return (
         <Card className={styles.controls}>
             <Button
@@ -31,6 +32,13 @@ const PlayerControls = memo(({ onPlay, onPause, onStop }: PlayerControlsProps) =
                 onClick={onStop}
             >
                 Stop
+            </Button>
+
+            <Button
+                className={`${styles.button} ${styles.resetButton}`}
+                onClick={onReset}
+            >
+                New Audio
             </Button>
         </Card>
     );

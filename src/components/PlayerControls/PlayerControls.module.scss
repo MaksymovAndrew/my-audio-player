@@ -2,8 +2,9 @@
 @use '../../styles/layout' as layout;
 
 .controls {
-  width: 75%;
+  width: auto;
   display: flex;
+  flex-wrap: nowrap;
   gap: layout.$spacing-lg;
   align-items: center;
   justify-content: center;
@@ -18,6 +19,7 @@
   border-radius: layout.$radius-lg;
   box-shadow: layout.$shadow-md colors.$color-primary-alpha-25;
   min-width: 90px;
+  white-space: nowrap;
 
   &:hover {
     box-shadow: layout.$shadow-lg colors.$color-primary-alpha-35;
@@ -65,5 +67,27 @@
       colors.$color-primary-dark 0%,
       colors.$color-primary-light 100%
     );
+  }
+}
+
+.resetButton {
+  background: linear-gradient(
+    135deg,
+    colors.$color-primary-light 0%,
+    colors.$color-primary-lighter 100%
+  );
+  box-shadow: layout.$shadow-md colors.$color-primary-light-alpha-30;
+
+  &:hover {
+    background: linear-gradient(
+      135deg,
+      colors.$color-primary-light 0%,
+      colors.$color-primary-lightest 100%
+    );
+    box-shadow: layout.$shadow-lg colors.$color-primary-light-alpha-40;
+  }
+
+  &:active {
+    box-shadow: layout.$shadow-sm colors.$color-primary-light-alpha-30;
   }
 }
