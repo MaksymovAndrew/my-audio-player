@@ -1,5 +1,5 @@
 export type ThrottledFunction<Args extends unknown[]> = {
-    (this: unknown, ...args: Args): void;
+    (...args: Args): void;
     cancel: () => void;
 };
 
@@ -10,9 +10,9 @@ export function throttle<Args extends unknown[]>(
     let inThrottle: boolean = false;
     let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
-    const throttled = function (this: unknown, ...args: Args) {
+    const throttled = (...args: Args) => {
         if (!inThrottle) {
-            func.apply(this, args);
+            func(...args);
             inThrottle = true;
 
             timeoutId = setTimeout(() => {
@@ -20,7 +20,7 @@ export function throttle<Args extends unknown[]>(
                 timeoutId = null;
             }, interval);
         }
-    } as ThrottledFunction<Args>;
+    };
 
     throttled.cancel = () => {
         if (timeoutId !== null) {
