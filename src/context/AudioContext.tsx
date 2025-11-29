@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useMemo, type ReactNode } from 'react';
-import type { AudioContextType } from '../types/context.types';
+import type { AudioContextType } from '../types/contextTypes';
 
 const AudioContext = createContext<AudioContextType | undefined>(undefined);
 

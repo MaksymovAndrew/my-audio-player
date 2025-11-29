@@ -1,7 +1,4 @@
-export type ThrottledFunction<Args extends unknown[]> = {
-    (...args: Args): void;
-    cancel: () => void;
-};
+import type { ThrottledFunction } from '../types/utilitiesTypes';
 
 export function throttle<Args extends unknown[]>(
     func: (...args: Args) => void,

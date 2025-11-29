@@ -5,9 +5,10 @@ import type {
     D3GroupSelection,
     D3TextSelection,
     D3Timer,
-} from '../../../types/drawer.types';
+} from '../../../types/drawerTypes';
+import type { ThrottledFunction } from '../../../types/utilitiesTypes';
 import { formatTime } from '../../../utils/formatTime';
-import { throttle, type ThrottledFunction } from '../../../utils/throttle';
+import { throttle } from '../../../utils/throttle';
 
 class Drawer {
     private buffer: AudioBuffer;
