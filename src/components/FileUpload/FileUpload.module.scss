@@ -7,17 +7,13 @@
   font-size: layout.$font-md;
   font-weight: layout.$font-medium;
   color: colors.$color-white;
-  background: linear-gradient(135deg, colors.$color-primary 0%, colors.$color-primary-light 100%);
+  background: colors.$gradient-primary;
   border-radius: layout.$radius-lg;
   box-shadow: layout.$shadow-md colors.$color-primary-alpha-30;
 
   &:hover {
     box-shadow: layout.$shadow-xl colors.$color-primary-alpha-40;
-    background: linear-gradient(
-      135deg,
-      colors.$color-primary 0%,
-      colors.$color-primary-lighter 100%
-    );
+    background: colors.$gradient-primary-hover;
   }
 
   &:active {

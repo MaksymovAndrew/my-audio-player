@@ -34,12 +34,23 @@ $border-width-medium: 2px;
 // transforms
 $transform-hover-up: translateY(-2px);
 $transform-active-reset: translateY(0);
+$transform-scale-active: scale(1.15);
+$transform-center: translate(-50%, -50%);
 
 // z-index
 $z-index-overlay: 1;
 
-// shadows (without color, use with alpha colors)
+// shadows (without color, used with alpha colors)
 $shadow-sm: 0 2px 8px;
+$shadow-active: 0 3px 12px;
 $shadow-md: 0 4px 12px;
 $shadow-lg: 0 6px 18px;
 $shadow-xl: 0 6px 20px;
+
+// container dimensions
+$container-width: 99%;
+$container-height: 450px;
+
+// slider dimensions
+$slider-height: 6px;
+$slider-thumb-size: 18px;

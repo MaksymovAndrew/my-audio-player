@@ -31,59 +31,35 @@
 }
 
 .playButton {
-  background: linear-gradient(135deg, colors.$color-primary 0%, colors.$color-primary-light 100%);
+  background: colors.$gradient-primary;
 
   &:hover {
-    background: linear-gradient(
-      135deg,
-      colors.$color-primary 0%,
-      colors.$color-primary-lighter 100%
-    );
+    background: colors.$gradient-primary-hover;
   }
 }
 
 .pauseButton {
-  background: linear-gradient(
-    135deg,
-    colors.$color-primary-light 0%,
-    colors.$color-primary-lighter 100%
-  );
+  background: colors.$gradient-button-light;
 
   &:hover {
-    background: linear-gradient(
-      135deg,
-      colors.$color-primary-light 0%,
-      colors.$color-primary-lightest 100%
-    );
+    background: colors.$gradient-button-light-hover;
   }
 }
 
 .stopButton {
-  background: linear-gradient(135deg, colors.$color-primary-dark 0%, colors.$color-primary 100%);
+  background: colors.$gradient-button-dark;
 
   &:hover {
-    background: linear-gradient(
-      135deg,
-      colors.$color-primary-dark 0%,
-      colors.$color-primary-light 100%
-    );
+    background: colors.$gradient-button-dark-hover;
   }
 }
 
 .resetButton {
-  background: linear-gradient(
-    135deg,
-    colors.$color-primary-light 0%,
-    colors.$color-primary-lighter 100%
-  );
+  background: colors.$gradient-button-light;
   box-shadow: layout.$shadow-md colors.$color-primary-light-alpha-30;
 
   &:hover {
-    background: linear-gradient(
-      135deg,
-      colors.$color-primary-light 0%,
-      colors.$color-primary-lightest 100%
-    );
+    background: colors.$gradient-button-light-hover;
     box-shadow: layout.$shadow-lg colors.$color-primary-light-alpha-40;
   }
 

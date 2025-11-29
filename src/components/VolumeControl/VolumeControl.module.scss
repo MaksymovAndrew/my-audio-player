@@ -19,7 +19,7 @@
 
 .slider {
   width: 250px;
-  height: 6px;
+  height: layout.$slider-height;
   border-radius: layout.$radius-sm;
   outline: none;
   cursor: pointer;
@@ -31,49 +31,49 @@
   &::-webkit-slider-thumb {
     appearance: none;
     -webkit-appearance: none;
-    width: 18px;
-    height: 18px;
+    width: layout.$slider-thumb-size;
+    height: layout.$slider-thumb-size;
     border-radius: layout.$radius-round;
-    background: linear-gradient(135deg, colors.$color-primary 0%, colors.$color-primary-light 100%);
+    background: colors.$gradient-primary;
     cursor: pointer;
-    box-shadow: 0 2px 8px colors.$color-primary-alpha-30;
+    box-shadow: layout.$shadow-sm colors.$color-primary-alpha-30;
     transition: all layout.$transition-fast;
     margin-top: -6px;
 
     &:active {
-      transform: scale(1.15);
-      box-shadow: 0 3px 12px colors.$color-primary-alpha-40;
+      transform: layout.$transform-scale-active;
+      box-shadow: layout.$shadow-active colors.$color-primary-alpha-40;
     }
   }
 
   &::-moz-range-thumb {
-    width: 18px;
-    height: 18px;
+    width: layout.$slider-thumb-size;
+    height: layout.$slider-thumb-size;
     border-radius: layout.$radius-round;
-    background: linear-gradient(135deg, colors.$color-primary 0%, colors.$color-primary-light 100%);
+    background: colors.$gradient-primary;
     cursor: pointer;
     border: none;
-    box-shadow: 0 2px 8px colors.$color-primary-alpha-30;
+    box-shadow: layout.$shadow-sm colors.$color-primary-alpha-30;
     transition: all layout.$transition-fast;
 
     &:active {
-      transform: scale(1.15);
-      box-shadow: 0 3px 12px colors.$color-primary-alpha-40;
+      transform: layout.$transform-scale-active;
+      box-shadow: layout.$shadow-active colors.$color-primary-alpha-40;
     }
   }
 
   &::-webkit-slider-runnable-track {
     width: 100%;
-    height: 6px;
+    height: layout.$slider-height;
     border-radius: layout.$radius-sm;
-    background: linear-gradient(to right, colors.$color-primary-lightest 0%, colors.$color-primary-light 50%, colors.$color-primary 100%);
+    background: colors.$gradient-slider-track;
   }
 
   &::-moz-range-track {
     width: 100%;
-    height: 6px;
+    height: layout.$slider-height;
     border-radius: layout.$radius-sm;
-    background: linear-gradient(to right, colors.$color-primary-lightest 0%, colors.$color-primary-light 50%, colors.$color-primary 100%);
+    background: colors.$gradient-slider-track;
     border: none;
   }
 }

@@ -7,7 +7,7 @@
   display: flex;
   align-items: center;
   gap: layout.$spacing-xl;
-  box-shadow: 0 4px 12px colors.$color-primary-alpha-15;
+  box-shadow: layout.$shadow-md colors.$color-primary-alpha-15;
 }
 
 .info {

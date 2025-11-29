@@ -2,8 +2,8 @@
 @use '../../styles/layout' as layout;
 
 .dragAndDrop {
-  width: 99%;
-  height: 450px;
+  width: layout.$container-width;
+  height: layout.$container-height;
   margin-top: layout.$spacing-3xl;
   border: layout.$border-width-medium dashed colors.$color-gray;
   background-color: transparent;
@@ -23,7 +23,7 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: layout.$transform-center;
   color: colors.$color-gray-light;
   font-size: layout.$font-lg;
   text-align: center;

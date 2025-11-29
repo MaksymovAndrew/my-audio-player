@@ -10,7 +10,7 @@ $color-white: #fff;
 $color-gray: #666;
 $color-gray-light: #999;
 
-// alpha colors (transparent) - primary
+// transparent colors
 $color-primary-alpha-05: rgba(255, 20, 147, 0.05);
 $color-primary-alpha-10: rgba(255, 20, 147, 0.1);
 $color-primary-alpha-15: rgba(255, 20, 147, 0.15);
@@ -20,6 +20,17 @@ $color-primary-alpha-30: rgba(255, 20, 147, 0.3);
 $color-primary-alpha-35: rgba(255, 20, 147, 0.35);
 $color-primary-alpha-40: rgba(255, 20, 147, 0.4);
 
-// alpha colors (transparent) - primary light
+// transparent colors light
 $color-primary-light-alpha-30: rgba(255, 105, 180, 0.3);
 $color-primary-light-alpha-40: rgba(255, 105, 180, 0.4);
+
+// gradients
+$gradient-primary: linear-gradient(135deg, $color-primary 0%, $color-primary-light 100%);
+$gradient-primary-hover: linear-gradient(135deg, $color-primary 0%, $color-primary-lighter 100%);
+$gradient-slider-track: linear-gradient(to right, $color-primary-lightest 0%, $color-primary-light 50%, $color-primary 100%);
+
+// button gradients
+$gradient-button-light: linear-gradient(135deg, $color-primary-light 0%, $color-primary-lighter 100%);
+$gradient-button-light-hover: linear-gradient(135deg, $color-primary-light 0%, $color-primary-lightest 100%);
+$gradient-button-dark: linear-gradient(135deg, $color-primary-dark 0%, $color-primary 100%);
+$gradient-button-dark-hover: linear-gradient(135deg, $color-primary-dark 0%, $color-primary-light 100%);

@@ -1,12 +1,14 @@
+@use '../../styles/layout' as layout;
+
 .waveformContainer {
-  width: 99%;
-  height: 450px;
+  width: layout.$container-width;
+  height: layout.$container-height;
   position: relative;
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
-  transition: opacity 0.2s;
+  transition: opacity layout.$transition-fast;
   opacity: 1;
 
   &.loading {
