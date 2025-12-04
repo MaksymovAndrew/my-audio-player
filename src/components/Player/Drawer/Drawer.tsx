@@ -147,12 +147,6 @@ class Drawer {
                     .attr('x2', width)
             );
 
-        graphGroup // click everywhere
-            .append('rect')
-            .attr('width', this.graphWidth)
-            .attr('height', height)
-            .attr('fill', 'rgba(255, 255, 255, 0)');
-
         const g = graphGroup // center graph
             .append('g')
             .attr('transform', `translate(0, ${height / 2})`)
@@ -200,6 +194,22 @@ class Drawer {
                     .tickValues(tickValues) // points
                     .tickFormat((d) => formatTime(Number(d)))
             );
+
+        // click everywhere
+        graphGroup
+            .append('rect')
+            .attr('width', this.graphWidth)
+            .attr('height', height)
+            .attr('fill', 'transparent')
+            .style('cursor', 'pointer')
+            .style('pointer-events', 'all')
+            .on('click', (event: MouseEvent) => {
+                if (this.isDragging) return; // ignore clicks during drag
+
+                const rect = (event.currentTarget as SVGRectElement).getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                this.seekToPosition(x);
+            });
 
         this.graphGroup = graphGroup;
 
@@ -277,6 +287,12 @@ class Drawer {
         return (position / this.graphWidth) * this.duration;
     }
 
+    private seekToPosition(position: number) {
+        const clampedPosition = Math.max(0, Math.min(position, this.graphWidth));
+        const time = this.getTimeFromPosition(clampedPosition);
+        this.onCursorDragCallback?.(time);
+    }
+
     private setupDragBehavior() {
         if (!this.cursorGroup || !this.onCursorDragCallback) return;
 
@@ -286,9 +302,7 @@ class Drawer {
             this.svg?.style('cursor', 'default');
             document.body.classList.remove('dragging-cursor');
 
-            // final time when stopped dragging
-            const time = this.getTimeFromPosition(this.cursorPosition);
-            this.onCursorDragCallback?.(time);
+            this.seekToPosition(this.cursorPosition);
 
             this.isDragging = false;
         };
